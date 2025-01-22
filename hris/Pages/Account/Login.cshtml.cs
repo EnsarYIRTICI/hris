@@ -1,23 +1,24 @@
-
-using hris.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using hris.Staff.Domain.Entities;
-using hris.Staff.Infrastructure.Service;
+using hris.Staff.Application.Service;
+using hris.Security.Application.Service;
+using hris.Database;
 
 namespace hris.Pages
-{   
+{
     public class LoginModel : PageModel
     {
         private readonly AppDbContext _context;
         private readonly EmployeePasswordService _passwordService;
+        private readonly TokenService _tokenService;
 
-
-        public LoginModel(AppDbContext context, EmployeePasswordService passwordService) 
+        public LoginModel(AppDbContext context, EmployeePasswordService passwordService, TokenService tokenService) 
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _passwordService = passwordService ?? throw new ArgumentNullException(nameof(passwordService));
+            _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService));
 
         }
 
@@ -54,13 +55,30 @@ namespace hris.Pages
 
                 // Şifreyi doğrula
                 var employeePassword = _context.EmployeePasswords
-                    .LastOrDefault(p => p.EmployeeId == employeeEmail.EmployeeId);
+                    .FirstOrDefault(p => p.EmployeeId == employeeEmail.EmployeeId && p.IsValid);
 
                 if (employeePassword == null || !_passwordService.VerifyPasswordHash(Input.Password, employeePassword.PasswordHash, employeePassword.PasswordSalt))
                 {
                     ErrorMessage = "Invalid email or password.";
                     return Page();
                 }
+
+                // Çalışan bilgilerini al
+                var employee = _context.Employees.Find(employeeEmail.EmployeeId);
+
+                // Token oluştur
+             
+                var token = _tokenService.GenerateToken(employee);
+
+                Console.WriteLine("TOKEN --> ", token);
+
+                // Token'ı cookie'ye ekle
+                Response.Cookies.Append("AuthToken", token, new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    Expires = DateTime.UtcNow.AddDays(7),
+                });
 
                 // Giriş başarılı, ana sayfaya yönlendir
                 return RedirectToPage("/Index");

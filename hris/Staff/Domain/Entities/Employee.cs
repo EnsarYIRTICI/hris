@@ -20,6 +20,12 @@ namespace hris.Staff.Domain.Entities
         [Required]
         public DateTime DateOfBirth { get; set; } // Doğum tarihi
 
+        public DateTime? LastPasswordChange { get; set; } // Şifre değişim tarihi
+
+
+        [Required]
+        public DateTime CreatedAt { get; set; } // Employee Oluşturulma Tarihi
+
         // Navigation Properties
 
         public ICollection<EmployeePassword> Passwords { get; set; } = new List<EmployeePassword>(); // Adresleri

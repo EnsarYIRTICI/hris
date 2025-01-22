@@ -5,7 +5,8 @@ namespace hris.Pages
 {
     public class IndexModel : PageModel
     {
-        public string Message { get; set; } = "Hello from Razor!";
+        public string Title { get; set; } = "Dashboard";
+        public string Message { get; set; } = "Hello from Hris!";
 
         private readonly ILogger<IndexModel> _logger;
 

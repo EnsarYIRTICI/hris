@@ -18,7 +18,7 @@ namespace hris.Staff.Domain.Entities
         public byte[] PasswordSalt { get; set; } // Şifreleme İçin Kullanılan Salt
 
         [Required]
-        public bool IsValid { get; set; } // Şifrenin Aktiflik Durumu
+        public bool IsValid { get; set; } = true; // Şifrenin Aktiflik Durumu
 
         [Required]
         public DateTime CreatedAt { get; set; } // Şifre Oluşturulma Tarihi

@@ -1,13 +1,50 @@
 ﻿@page
 @model IndexModel
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <title>Razor Pages</title>
-</head>
-<body>
 
-    <h1>selamS</h1>
-</body>
-</html>
+<section class="overflow-scroll h-full flex-1 p-4">
+
+    <!-- Başlık -->
+
+    <header class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-semibold text-gray-800">@Model.Title</h1>
+        <p class="text-sm text-gray-500">Welcome, @Model.Message</p>
+    </header>
+
+    <!-- İstatistikler -->
+
+    <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+        <!-- Çalışan Kartı -->
+
+        <article class="bg-white shadow-md rounded-lg p-4">
+            <h2 class="text-lg font-semibold text-gray-700">Employees</h2>
+            <p class="mt-2 text-3xl font-bold text-indigo-600">120</p>
+            <p class="mt-1 text-sm text-gray-500">Total employees</p>
+        </article>
+
+        <!-- Departman Kartı -->
+
+        <article class="bg-white shadow-md rounded-lg p-4">
+            <h2 class="text-lg font-semibold text-gray-700">Departments</h2>
+            <p class="mt-2 text-3xl font-bold text-indigo-600">8</p>
+            <p class="mt-1 text-sm text-gray-500">Active departments</p>
+        </article>
+
+        <!-- İzin Kartı -->
+
+        <article class="bg-white shadow-md rounded-lg p-4">
+            <h2 class="text-lg font-semibold text-gray-700">Leaves</h2>
+            <p class="mt-2 text-3xl font-bold text-indigo-600">24</p>
+            <p class="mt-1 text-sm text-gray-500">Pending requests</p>
+        </article>
+
+        <!-- Proje Kartı -->
+
+        <article class="bg-white shadow-md rounded-lg p-4">
+            <h2 class="text-lg font-semibold text-gray-700">Projects</h2>
+            <p class="mt-2 text-3xl font-bold text-indigo-600">15</p>
+            <p class="mt-1 text-sm text-gray-500">Ongoing projects</p>
+        </article>
+    </section>
+
+</section>

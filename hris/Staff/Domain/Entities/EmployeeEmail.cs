@@ -17,13 +17,16 @@ namespace hris.Staff.Domain.Entities
         public string Email { get; set; } // E-posta adresi
 
         [Required]
-        public bool IsValid { get; set; } // Şifrenin Aktiflik Durumu
+        public bool IsValid { get; set; } = true; // Şifrenin Aktiflik Durumu
 
         [Required]
-        public bool IsApproved { get; set; } // Şifrenin Aktiflik Durumu
+        public bool IsApproved { get; set; } = true; // Şifrenin Aktiflik Durumu
 
         [Required]
-        public bool IsDeleted { get; set; } // Şifrenin Aktiflik Durumu
+        public bool IsDeleted { get; set; } = false; // Şifrenin Aktiflik Durumu
+
+        [Required]
+        public DateTime CreatedAt { get; set; } // Email Oluşturulma Tarihi
 
         [Required]
         public int EmailTypeId { get; set; } // Foreign Key to EmailType

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using hris.Infrastructure.Persistence;
+using hris.Database;
 
 #nullable disable
 
@@ -22,42 +22,7 @@ namespace hris.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("EmployeeDocument", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("DocumentTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("EmployeeId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("FilePath")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("Metadata")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("UploadedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DocumentTypeId");
-
-                    b.HasIndex("EmployeeId");
-
-                    b.ToTable("EmployeeDocuments");
-                });
-
-            modelBuilder.Entity("hris.Domain.Entities.Bank", b =>
+            modelBuilder.Entity("hris.Seed.Domain.Entities.Bank", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -87,7 +52,7 @@ namespace hris.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "Ziraat Bankası",
+                            Name = "Ziraat Bank",
                             SwiftCode = "TCZBTR2A"
                         },
                         new
@@ -105,12 +70,12 @@ namespace hris.Migrations
                         new
                         {
                             Id = 4,
-                            Name = "Yapı Kredi Bankası",
+                            Name = "Yapı Kredi Bank",
                             SwiftCode = "YAPITRISFEX"
                         });
                 });
 
-            modelBuilder.Entity("hris.Domain.Entities.City", b =>
+            modelBuilder.Entity("hris.Seed.Domain.Entities.City", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -133,7 +98,7 @@ namespace hris.Migrations
                     b.ToTable("Cities");
                 });
 
-            modelBuilder.Entity("hris.Domain.Entities.Country", b =>
+            modelBuilder.Entity("hris.Seed.Domain.Entities.Country", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -154,21 +119,21 @@ namespace hris.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "Türkiye"
+                            Name = "Turkey"
                         },
                         new
                         {
                             Id = 2,
-                            Name = "ABD"
+                            Name = "USA"
                         },
                         new
                         {
                             Id = 3,
-                            Name = "Almanya"
+                            Name = "Germany"
                         });
                 });
 
-            modelBuilder.Entity("hris.Domain.Entities.Department", b =>
+            modelBuilder.Entity("hris.Seed.Domain.Entities.Department", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -183,10 +148,17 @@ namespace hris.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Department");
+                    b.ToTable("Departments");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "IT"
+                        });
                 });
 
-            modelBuilder.Entity("hris.Domain.Entities.DocumentType", b =>
+            modelBuilder.Entity("hris.Seed.Domain.Entities.DocumentType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -211,31 +183,31 @@ namespace hris.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "Kimlik Fotokopisi"
+                            Name = "ID Copy"
                         },
                         new
                         {
                             Id = 2,
-                            Name = "Sağlık Raporu"
+                            Name = "Health Report"
                         },
                         new
                         {
                             Id = 3,
-                            Name = "Adli Sicil Kaydı"
+                            Name = "Criminal Record"
                         },
                         new
                         {
                             Id = 4,
-                            Name = "İkametgâh Belgesi"
+                            Name = "Proof of Residence"
                         },
                         new
                         {
                             Id = 5,
-                            Name = "Eğitim Sertifikası"
+                            Name = "Education Certificate"
                         });
                 });
 
-            modelBuilder.Entity("hris.Domain.Entities.EmailType", b =>
+            modelBuilder.Entity("hris.Seed.Domain.Entities.EmailType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -265,13 +237,230 @@ namespace hris.Migrations
                         });
                 });
 
-            modelBuilder.Entity("hris.Domain.Entities.Employee", b =>
+            modelBuilder.Entity("hris.Seed.Domain.Entities.MaritalStatusType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MaritalStatusTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Married"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Single"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Widowed"
+                        });
+                });
+
+            modelBuilder.Entity("hris.Seed.Domain.Entities.MilitaryStatusType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MilitaryStatusTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Completed"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Deferred"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Exempt"
+                        });
+                });
+
+            modelBuilder.Entity("hris.Seed.Domain.Entities.PhoneNumberType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PhoneNumberTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Mobile"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Work"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Home"
+                        });
+                });
+
+            modelBuilder.Entity("hris.Seed.Domain.Entities.Position", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("DepartmentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DepartmentId");
+
+                    b.ToTable("Positions");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            DepartmentId = 1,
+                            Name = "Manager"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            DepartmentId = 1,
+                            Name = "Software Developer"
+                        });
+                });
+
+            modelBuilder.Entity("hris.Seed.Domain.Entities.RelationshipType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RelationshipTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Mother"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Father"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Spouse"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Sibling"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Friend"
+                        });
+                });
+
+            modelBuilder.Entity("hris.Seed.Domain.Entities.Salary", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("EffectiveDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PositionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PositionId");
+
+                    b.ToTable("Salary");
+                });
+
+            modelBuilder.Entity("hris.Staff.Domain.Entities.Employee", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("datetime2");
@@ -286,6 +475,9 @@ namespace hris.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<DateTime?>("LastPasswordChange")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Tckn")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -293,10 +485,13 @@ namespace hris.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Tckn")
+                        .IsUnique();
+
                     b.ToTable("Employees");
                 });
 
-            modelBuilder.Entity("hris.Domain.Entities.EmployeeAddress", b =>
+            modelBuilder.Entity("hris.Staff.Domain.Entities.EmployeeAddress", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -334,7 +529,7 @@ namespace hris.Migrations
                     b.ToTable("EmployeeAddresses");
                 });
 
-            modelBuilder.Entity("hris.Domain.Entities.EmployeeBank", b =>
+            modelBuilder.Entity("hris.Staff.Domain.Entities.EmployeeBank", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -367,7 +562,42 @@ namespace hris.Migrations
                     b.ToTable("EmployeeBanks");
                 });
 
-            modelBuilder.Entity("hris.Domain.Entities.EmployeeEducation", b =>
+            modelBuilder.Entity("hris.Staff.Domain.Entities.EmployeeDocument", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("DocumentTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Metadata")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UploadedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DocumentTypeId");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.ToTable("EmployeeDocuments");
+                });
+
+            modelBuilder.Entity("hris.Staff.Domain.Entities.EmployeeEducation", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -401,13 +631,16 @@ namespace hris.Migrations
                     b.ToTable("EmployeeEducations");
                 });
 
-            modelBuilder.Entity("hris.Domain.Entities.EmployeeEmail", b =>
+            modelBuilder.Entity("hris.Staff.Domain.Entities.EmployeeEmail", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -431,14 +664,19 @@ namespace hris.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Email")
+                        .IsUnique();
+
                     b.HasIndex("EmailTypeId");
 
-                    b.HasIndex("EmployeeId");
+                    b.HasIndex("EmployeeId", "IsValid")
+                        .IsUnique()
+                        .HasFilter("[IsValid] = 1");
 
                     b.ToTable("EmployeeEmails");
                 });
 
-            modelBuilder.Entity("hris.Domain.Entities.EmployeeMaritalStatus", b =>
+            modelBuilder.Entity("hris.Staff.Domain.Entities.EmployeeMaritalStatus", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -461,7 +699,7 @@ namespace hris.Migrations
                     b.ToTable("EmployeeMaritalStatuses");
                 });
 
-            modelBuilder.Entity("hris.Domain.Entities.EmployeeMilitaryStatus", b =>
+            modelBuilder.Entity("hris.Staff.Domain.Entities.EmployeeMilitaryStatus", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -484,7 +722,7 @@ namespace hris.Migrations
                     b.ToTable("EmployeeMilitaryStatuses");
                 });
 
-            modelBuilder.Entity("hris.Domain.Entities.EmployeePassword", b =>
+            modelBuilder.Entity("hris.Staff.Domain.Entities.EmployeePassword", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -521,7 +759,7 @@ namespace hris.Migrations
                     b.ToTable("EmployeePasswords");
                 });
 
-            modelBuilder.Entity("hris.Domain.Entities.EmployeePhoneNumber", b =>
+            modelBuilder.Entity("hris.Staff.Domain.Entities.EmployeePhoneNumber", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -549,7 +787,7 @@ namespace hris.Migrations
                     b.ToTable("EmployeePhoneNumbers");
                 });
 
-            modelBuilder.Entity("hris.Domain.Entities.EmployeePosition", b =>
+            modelBuilder.Entity("hris.Staff.Domain.Entities.EmployeePosition", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -575,10 +813,10 @@ namespace hris.Migrations
 
                     b.HasIndex("PositionId");
 
-                    b.ToTable("EmployeePosition");
+                    b.ToTable("EmployeePositions");
                 });
 
-            modelBuilder.Entity("hris.Domain.Entities.EmployeeRelative", b =>
+            modelBuilder.Entity("hris.Staff.Domain.Entities.EmployeeRelative", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -611,228 +849,9 @@ namespace hris.Migrations
                     b.ToTable("EmployeeRelatives");
                 });
 
-            modelBuilder.Entity("hris.Domain.Entities.MaritalStatusType", b =>
+            modelBuilder.Entity("hris.Seed.Domain.Entities.City", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("MaritalStatusTypes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Evli"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Bekar"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Dul"
-                        });
-                });
-
-            modelBuilder.Entity("hris.Domain.Entities.MilitaryStatusType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("MilitaryStatusTypes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Tamamlandı"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Tecilli"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Muaf"
-                        });
-                });
-
-            modelBuilder.Entity("hris.Domain.Entities.PhoneNumberType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("PhoneNumberTypes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Mobile"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Work"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Home"
-                        });
-                });
-
-            modelBuilder.Entity("hris.Domain.Entities.Position", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("DepartmentId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DepartmentId");
-
-                    b.ToTable("Position");
-                });
-
-            modelBuilder.Entity("hris.Domain.Entities.RelationshipType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("RelationshipTypes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Anne"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Baba"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Eş"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "Kardeş"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Name = "Arkadaş"
-                        });
-                });
-
-            modelBuilder.Entity("hris.Domain.Entities.Salary", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("EffectiveDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("PositionId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PositionId");
-
-                    b.ToTable("Salary");
-                });
-
-            modelBuilder.Entity("EmployeeDocument", b =>
-                {
-                    b.HasOne("hris.Domain.Entities.DocumentType", "DocumentType")
-                        .WithMany()
-                        .HasForeignKey("DocumentTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("hris.Domain.Entities.Employee", "Employee")
-                        .WithMany("Documents")
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("DocumentType");
-
-                    b.Navigation("Employee");
-                });
-
-            modelBuilder.Entity("hris.Domain.Entities.City", b =>
-                {
-                    b.HasOne("hris.Domain.Entities.Country", "Country")
+                    b.HasOne("hris.Seed.Domain.Entities.Country", "Country")
                         .WithMany("Cities")
                         .HasForeignKey("CountryId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -841,30 +860,52 @@ namespace hris.Migrations
                     b.Navigation("Country");
                 });
 
-            modelBuilder.Entity("hris.Domain.Entities.EmployeeAddress", b =>
+            modelBuilder.Entity("hris.Seed.Domain.Entities.Position", b =>
                 {
-                    b.HasOne("hris.Domain.Entities.City", "City")
+                    b.HasOne("hris.Seed.Domain.Entities.Department", "Department")
+                        .WithMany("Positions")
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Department");
+                });
+
+            modelBuilder.Entity("hris.Seed.Domain.Entities.Salary", b =>
+                {
+                    b.HasOne("hris.Staff.Domain.Entities.EmployeePosition", "Position")
+                        .WithMany("Salaries")
+                        .HasForeignKey("PositionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Position");
+                });
+
+            modelBuilder.Entity("hris.Staff.Domain.Entities.EmployeeAddress", b =>
+                {
+                    b.HasOne("hris.Seed.Domain.Entities.City", "City")
                         .WithMany("Addresses")
                         .HasForeignKey("CityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("hris.Domain.Entities.Employee", null)
+                    b.HasOne("hris.Staff.Domain.Entities.Employee", null)
                         .WithMany("Addresses")
                         .HasForeignKey("EmployeeId");
 
                     b.Navigation("City");
                 });
 
-            modelBuilder.Entity("hris.Domain.Entities.EmployeeBank", b =>
+            modelBuilder.Entity("hris.Staff.Domain.Entities.EmployeeBank", b =>
                 {
-                    b.HasOne("hris.Domain.Entities.Bank", "Bank")
+                    b.HasOne("hris.Seed.Domain.Entities.Bank", "Bank")
                         .WithMany("EmployeeBanks")
                         .HasForeignKey("BankId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("hris.Domain.Entities.Employee", "Employee")
+                    b.HasOne("hris.Staff.Domain.Entities.Employee", "Employee")
                         .WithMany("Banks")
                         .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -875,9 +916,28 @@ namespace hris.Migrations
                     b.Navigation("Employee");
                 });
 
-            modelBuilder.Entity("hris.Domain.Entities.EmployeeEducation", b =>
+            modelBuilder.Entity("hris.Staff.Domain.Entities.EmployeeDocument", b =>
                 {
-                    b.HasOne("hris.Domain.Entities.Employee", "Employee")
+                    b.HasOne("hris.Seed.Domain.Entities.DocumentType", "DocumentType")
+                        .WithMany()
+                        .HasForeignKey("DocumentTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("hris.Staff.Domain.Entities.Employee", "Employee")
+                        .WithMany("Documents")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DocumentType");
+
+                    b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("hris.Staff.Domain.Entities.EmployeeEducation", b =>
+                {
+                    b.HasOne("hris.Staff.Domain.Entities.Employee", "Employee")
                         .WithMany("Educations")
                         .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -886,15 +946,15 @@ namespace hris.Migrations
                     b.Navigation("Employee");
                 });
 
-            modelBuilder.Entity("hris.Domain.Entities.EmployeeEmail", b =>
+            modelBuilder.Entity("hris.Staff.Domain.Entities.EmployeeEmail", b =>
                 {
-                    b.HasOne("hris.Domain.Entities.EmailType", "EmailType")
+                    b.HasOne("hris.Seed.Domain.Entities.EmailType", "EmailType")
                         .WithMany("Emails")
                         .HasForeignKey("EmailTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("hris.Domain.Entities.Employee", "Employee")
+                    b.HasOne("hris.Staff.Domain.Entities.Employee", "Employee")
                         .WithMany("Emails")
                         .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -905,15 +965,15 @@ namespace hris.Migrations
                     b.Navigation("Employee");
                 });
 
-            modelBuilder.Entity("hris.Domain.Entities.EmployeeMaritalStatus", b =>
+            modelBuilder.Entity("hris.Staff.Domain.Entities.EmployeeMaritalStatus", b =>
                 {
-                    b.HasOne("hris.Domain.Entities.Employee", "Employee")
+                    b.HasOne("hris.Staff.Domain.Entities.Employee", "Employee")
                         .WithMany()
                         .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("hris.Domain.Entities.MaritalStatusType", "MaritalStatusType")
+                    b.HasOne("hris.Seed.Domain.Entities.MaritalStatusType", "MaritalStatusType")
                         .WithMany("EmployeeMaritalStatuses")
                         .HasForeignKey("MaritalStatusTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -924,15 +984,15 @@ namespace hris.Migrations
                     b.Navigation("MaritalStatusType");
                 });
 
-            modelBuilder.Entity("hris.Domain.Entities.EmployeeMilitaryStatus", b =>
+            modelBuilder.Entity("hris.Staff.Domain.Entities.EmployeeMilitaryStatus", b =>
                 {
-                    b.HasOne("hris.Domain.Entities.Employee", "Employee")
+                    b.HasOne("hris.Staff.Domain.Entities.Employee", "Employee")
                         .WithMany()
                         .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("hris.Domain.Entities.MilitaryStatusType", "MilitaryStatusType")
+                    b.HasOne("hris.Seed.Domain.Entities.MilitaryStatusType", "MilitaryStatusType")
                         .WithMany("EmployeeMilitaryStatuses")
                         .HasForeignKey("MilitaryStatusTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -943,9 +1003,9 @@ namespace hris.Migrations
                     b.Navigation("MilitaryStatusType");
                 });
 
-            modelBuilder.Entity("hris.Domain.Entities.EmployeePassword", b =>
+            modelBuilder.Entity("hris.Staff.Domain.Entities.EmployeePassword", b =>
                 {
-                    b.HasOne("hris.Domain.Entities.Employee", "Employee")
+                    b.HasOne("hris.Staff.Domain.Entities.Employee", "Employee")
                         .WithMany("Passwords")
                         .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -954,15 +1014,15 @@ namespace hris.Migrations
                     b.Navigation("Employee");
                 });
 
-            modelBuilder.Entity("hris.Domain.Entities.EmployeePhoneNumber", b =>
+            modelBuilder.Entity("hris.Staff.Domain.Entities.EmployeePhoneNumber", b =>
                 {
-                    b.HasOne("hris.Domain.Entities.Employee", "Employee")
+                    b.HasOne("hris.Staff.Domain.Entities.Employee", "Employee")
                         .WithMany("PhoneNumbers")
                         .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("hris.Domain.Entities.PhoneNumberType", "PhoneNumberType")
+                    b.HasOne("hris.Seed.Domain.Entities.PhoneNumberType", "PhoneNumberType")
                         .WithMany("PhoneNumbers")
                         .HasForeignKey("PhoneNumberTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -973,15 +1033,15 @@ namespace hris.Migrations
                     b.Navigation("PhoneNumberType");
                 });
 
-            modelBuilder.Entity("hris.Domain.Entities.EmployeePosition", b =>
+            modelBuilder.Entity("hris.Staff.Domain.Entities.EmployeePosition", b =>
                 {
-                    b.HasOne("hris.Domain.Entities.Employee", "Employee")
+                    b.HasOne("hris.Staff.Domain.Entities.Employee", "Employee")
                         .WithMany("Positions")
                         .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("hris.Domain.Entities.Position", "Position")
+                    b.HasOne("hris.Seed.Domain.Entities.Position", "Position")
                         .WithMany("Positions")
                         .HasForeignKey("PositionId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -992,15 +1052,15 @@ namespace hris.Migrations
                     b.Navigation("Position");
                 });
 
-            modelBuilder.Entity("hris.Domain.Entities.EmployeeRelative", b =>
+            modelBuilder.Entity("hris.Staff.Domain.Entities.EmployeeRelative", b =>
                 {
-                    b.HasOne("hris.Domain.Entities.Employee", "Employee")
+                    b.HasOne("hris.Staff.Domain.Entities.Employee", "Employee")
                         .WithMany("Relatives")
                         .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("hris.Domain.Entities.RelationshipType", "RelationshipType")
+                    b.HasOne("hris.Seed.Domain.Entities.RelationshipType", "RelationshipType")
                         .WithMany("EmployeeRelatives")
                         .HasForeignKey("RelationshipTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1011,54 +1071,57 @@ namespace hris.Migrations
                     b.Navigation("RelationshipType");
                 });
 
-            modelBuilder.Entity("hris.Domain.Entities.Position", b =>
-                {
-                    b.HasOne("hris.Domain.Entities.Department", "Department")
-                        .WithMany("Positions")
-                        .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Department");
-                });
-
-            modelBuilder.Entity("hris.Domain.Entities.Salary", b =>
-                {
-                    b.HasOne("hris.Domain.Entities.EmployeePosition", "Position")
-                        .WithMany("Salaries")
-                        .HasForeignKey("PositionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Position");
-                });
-
-            modelBuilder.Entity("hris.Domain.Entities.Bank", b =>
+            modelBuilder.Entity("hris.Seed.Domain.Entities.Bank", b =>
                 {
                     b.Navigation("EmployeeBanks");
                 });
 
-            modelBuilder.Entity("hris.Domain.Entities.City", b =>
+            modelBuilder.Entity("hris.Seed.Domain.Entities.City", b =>
                 {
                     b.Navigation("Addresses");
                 });
 
-            modelBuilder.Entity("hris.Domain.Entities.Country", b =>
+            modelBuilder.Entity("hris.Seed.Domain.Entities.Country", b =>
                 {
                     b.Navigation("Cities");
                 });
 
-            modelBuilder.Entity("hris.Domain.Entities.Department", b =>
+            modelBuilder.Entity("hris.Seed.Domain.Entities.Department", b =>
                 {
                     b.Navigation("Positions");
                 });
 
-            modelBuilder.Entity("hris.Domain.Entities.EmailType", b =>
+            modelBuilder.Entity("hris.Seed.Domain.Entities.EmailType", b =>
                 {
                     b.Navigation("Emails");
                 });
 
-            modelBuilder.Entity("hris.Domain.Entities.Employee", b =>
+            modelBuilder.Entity("hris.Seed.Domain.Entities.MaritalStatusType", b =>
+                {
+                    b.Navigation("EmployeeMaritalStatuses");
+                });
+
+            modelBuilder.Entity("hris.Seed.Domain.Entities.MilitaryStatusType", b =>
+                {
+                    b.Navigation("EmployeeMilitaryStatuses");
+                });
+
+            modelBuilder.Entity("hris.Seed.Domain.Entities.PhoneNumberType", b =>
+                {
+                    b.Navigation("PhoneNumbers");
+                });
+
+            modelBuilder.Entity("hris.Seed.Domain.Entities.Position", b =>
+                {
+                    b.Navigation("Positions");
+                });
+
+            modelBuilder.Entity("hris.Seed.Domain.Entities.RelationshipType", b =>
+                {
+                    b.Navigation("EmployeeRelatives");
+                });
+
+            modelBuilder.Entity("hris.Staff.Domain.Entities.Employee", b =>
                 {
                     b.Navigation("Addresses");
 
@@ -1079,34 +1142,9 @@ namespace hris.Migrations
                     b.Navigation("Relatives");
                 });
 
-            modelBuilder.Entity("hris.Domain.Entities.EmployeePosition", b =>
+            modelBuilder.Entity("hris.Staff.Domain.Entities.EmployeePosition", b =>
                 {
                     b.Navigation("Salaries");
-                });
-
-            modelBuilder.Entity("hris.Domain.Entities.MaritalStatusType", b =>
-                {
-                    b.Navigation("EmployeeMaritalStatuses");
-                });
-
-            modelBuilder.Entity("hris.Domain.Entities.MilitaryStatusType", b =>
-                {
-                    b.Navigation("EmployeeMilitaryStatuses");
-                });
-
-            modelBuilder.Entity("hris.Domain.Entities.PhoneNumberType", b =>
-                {
-                    b.Navigation("PhoneNumbers");
-                });
-
-            modelBuilder.Entity("hris.Domain.Entities.Position", b =>
-                {
-                    b.Navigation("Positions");
-                });
-
-            modelBuilder.Entity("hris.Domain.Entities.RelationshipType", b =>
-                {
-                    b.Navigation("EmployeeRelatives");
                 });
 #pragma warning restore 612, 618
         }

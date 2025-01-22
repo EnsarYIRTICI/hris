@@ -1,51 +1,161 @@
-﻿<!DOCTYPE html>
+﻿@using hris.Staff.Application.Dto
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+@{
+    var employee = HttpContextAccessor.HttpContext?.Items["Employee"] as EmployeeSummary;
+
+    var menuItems = new List<dynamic>
+    {
+        new { Title = "Dashboard", Url = "/", Icon = "<svg xmlns='http://www.w3.org/2000/svg' class='h-5 w-5' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z' /><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M9 22V12h6v10' /></svg>"  },
+        new { Title = "Employee", Url = "/staff", Icon = "<svg xmlns='http://www.w3.org/2000/svg' class='h-5 w-5' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M5.121 17.804A9.005 9.005 0 0112 15a9.005 9.005 0 016.879 2.804M15 11a3 3 0 11-6 0 3 3 0 016 0z' /></svg>" },
+        new { Title = "Report", Url = "/report", Icon = "<svg xmlns='http://www.w3.org/2000/svg' class='h-5 w-5' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 6h16M4 12h16m-7 6h7' /></svg>" },
+        new { Title = "Project", Url = "/project", Icon = "<svg xmlns='http://www.w3.org/2000/svg' class='h-5 w-5' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M9 17v-4a2 2 0 012-2h2a2 2 0 012 2v4m-3 3a9 9 0 100-18 9 9 0 000 18z' /></svg>" },
+        new { Title = "Department", Url = "/department", Icon = "<svg xmlns='http://www.w3.org/2000/svg' class='h-5 w-5' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 6h16M4 10h16M4 14h16M4 18h16' /></svg>" }
+    };
+
+
+    var sidebarState = HttpContextAccessor.HttpContext?.Request.Cookies["sidebarState"];
+    var sidebarClass = sidebarState == "closed" ? "sidebar-close" : "sidebar-open";
+    var sidebarItemClass = sidebarState == "closed" ? "w-0" : "w-52 ml-3";
+}
+
+<!DOCTYPE html>
 <html lang="en">
+
+<!-- Head -->
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - hris</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/hris.styles.css" asp-append-version="true" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 </head>
-<body>
+
+<!-- Body -->
+
+<body class="overflow-hidden h-screen w-screen flex flex-col bg-gray-100">
+
+    <!-- Header -->
+
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">hris</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
+        <nav class="bg-white border-b shadow">
+            <div class="container mx-auto px-4 flex justify-between items-center h-16">
+                <a href="/" class="text-lg font-semibold">HRIS</a>
+                <button onclick="toggleMobileSidebar()" class="md:hidden p-2 rounded text-gray-600 hover:bg-gray-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                    </svg>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - hris - <a asp-area="" asp-page="/Privacy">Privacy</a>
-        </div>
-    </footer>
+    <main class="overflow-hidden w-full flex-1 flex">
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+        <!-- Sidebar -->
 
-    @await RenderSectionAsync("Scripts", required: false)
+        <aside id="sidebar" class="@sidebarClass h-full md:block hidden">
+            <nav class="h-full flex flex-col bg-white border-r shadow-sm">
+                <div class="p-4 flex justify-end items-center border-b">
+
+                    <button onclick="toggleSidebar()" class="p-2 rounded bg-gray-100 hover:bg-gray-200">
+                        <svg id="toggle-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 12L6 6" />
+                        </svg>
+                    </button>
+                </div>
+
+                <ul class="overflow-x-hidden overflow-y-auto flex-1 px-3">
+                    @foreach (var item in menuItems)
+                    {
+                        <a href="@item.Url" class="
+                        relative flex items-center py-2 px-3 my-1
+                        font-medium rounded-md cursor-pointer
+                        transition-colors group
+                        hover:bg-indigo-50 text-gray-600">
+
+                            <span>
+                                @Html.Raw(item.Icon)
+                            </span>
+
+                            <span class="sidebar-item @sidebarItemClass overflow-hidden transition-all whitespace-nowrap">
+                                @item.Title
+                            </span>
+                        </a>
+                    }
+                </ul>
+
+                <div class="border-t flex p-3">
+                    <div class="w-10 h-10 rounded-md border border-slate-300 flex items-center justify-center">
+                        <h1>
+                            @employee.FirstName.Substring(0, 1)
+                            @employee.LastName.Substring(0, 1)
+                        </h1>
+                    </div>
+
+                    <div class="sidebar-item @sidebarItemClass flex items-center justify-between transition-all overflow-hidden text-slate-500 ">
+                        <div class="leading-4">
+                            <h4>
+                                @employee.FirstName
+                                @employee.LastName
+                            </h4>
+                            <span class="text-xs">
+                                @employee.Email
+                            </span>
+
+                        </div>
+                    </div>
+
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Children -->
+
+        @RenderBody()
+     
+    </main>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById("sidebar");
+            const sidebarItems = document.querySelectorAll(".sidebar-item");
+            const toggleIcon = document.getElementById("toggle-icon");
+
+            if (sidebar.classList.contains("sidebar-open")) {
+
+                sidebar.classList.remove("sidebar-open");
+                sidebar.classList.add("sidebar-close");
+
+                sidebarItems.forEach(item => {
+                    item.classList.remove("w-52");
+                    item.classList.remove("ml-3");
+                    item.classList.add("w-0");
+                });           
+
+                toggleIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 6l12 6-12 6"/>`;
+
+                document.cookie = "sidebarState=closed; path=/;";
+
+            } else {
+
+                sidebar.classList.remove("sidebar-close");
+                sidebar.classList.add("sidebar-open");
+
+                 sidebarItems.forEach(item => {
+                    item.classList.remove("w-0");
+                    item.classList.add("w-52");
+                    item.classList.add("ml-3");
+                });
+
+                toggleIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 12L6 6" />`;
+
+                document.cookie = "sidebarState=open; path=/;";
+
+            }
+        }
+
+    </script>
 </body>
 </html>
