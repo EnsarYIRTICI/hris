@@ -4,7 +4,7 @@ using hris.Staff.Application.Service;
 using Microsoft.AspNetCore.Mvc;
 using hris.Pages.PageModels;
 
-namespace hris.Pages.Staff
+namespace hris.Pages.Employees
 {
     public class IndexModel : BreadcrumbPageModel
     {
@@ -25,8 +25,7 @@ namespace hris.Pages.Staff
 
         public async Task OnGetAsync()
         {
-            AddBreadcrumb("Home", "/");
-            AddBreadcrumb("Staff");
+            AddBreadcrumb("Employees");
 
             if (!string.IsNullOrWhiteSpace(SearchTerm))
             {

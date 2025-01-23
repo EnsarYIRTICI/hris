@@ -1,5 +1,5 @@
 ﻿@page
-@model hris.Pages.Staff.Create.IndexModel
+@model hris.Pages.Employees.Create.IndexModel
 @{
 }
 
@@ -187,7 +187,7 @@
         document.getElementById('department').addEventListener('input', function () {
             const searchTerm = this.value;
 
-            fetch(`/staff/create/index?DepartmentId=${encodeURIComponent(searchTerm)}`, {
+            fetch(`/employees/create/index?DepartmentId=${encodeURIComponent(searchTerm)}`, {
                 method: 'GET',
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
@@ -203,6 +203,7 @@
                 })
                 .catch(error => console.error('Error fetching search results:', error));
         });
+
     </script>
 </section>
 

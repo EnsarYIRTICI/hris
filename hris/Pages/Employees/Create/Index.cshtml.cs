@@ -7,7 +7,7 @@ using hris.Staff.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace hris.Pages.Staff.Create
+namespace hris.Pages.Employees.Create
 {
     public class IndexModel : BreadcrumbPageModel
     {
@@ -51,8 +51,7 @@ namespace hris.Pages.Staff.Create
 
         public async Task Init(bool clear = true)
         {
-            AddBreadcrumb("Home", "/");
-            AddBreadcrumb("Staff", "/staff");
+            AddBreadcrumb("Employees", "/employees");
             AddBreadcrumb("Create Employee");
 
             if (clear)
