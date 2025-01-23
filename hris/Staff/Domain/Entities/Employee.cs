@@ -6,7 +6,7 @@ namespace hris.Staff.Domain.Entities
     public class Employee
     {
         [Key]
-        public int Id { get; set; } // Primary Key
+        public int Id { get; set; }
 
         [Required, MaxLength(100)]
         public string FirstName { get; set; } // Çalışanın adı

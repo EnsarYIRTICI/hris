@@ -16,6 +16,7 @@ namespace hris.Staff.Application.Service
         private readonly EmployeeEmailService _employeeEmailService;
         private readonly EmployeePasswordService _employeePasswordService;
         private readonly EmailTypeService _emailTypeService;
+        private readonly PhoneNumberTypeService _phoneNumberTypeService;
         private readonly PositionService _positionService;
 
         public EmployeeService(
@@ -23,7 +24,8 @@ namespace hris.Staff.Application.Service
             EmployeeEmailService employeeEmailService,
             EmployeePasswordService employeePasswordService,
             EmailTypeService emailTypeService,
-            PositionService positionService
+            PositionService positionService,
+            PhoneNumberTypeService phoneNumberTypeService
             )
         {
             _context = context;
@@ -31,13 +33,16 @@ namespace hris.Staff.Application.Service
             _employeePasswordService = employeePasswordService;
             _emailTypeService = emailTypeService;
             _positionService = positionService;
+            _phoneNumberTypeService = phoneNumberTypeService;
         }
 
 
-        public async Task<List<Employee>> SearchByFullNameAsync(string fullName)
+        public async Task<List<Employee>> SearchByFullNameOrTcknAsync(string searchQuery)
         {
             return await _context.Employees
-                .Where(e => EF.Functions.Like(e.FirstName + " " + e.LastName, $"%{fullName}%"))
+            .Where(e =>
+                    EF.Functions.Like(e.FirstName + " " + e.LastName, $"%{searchQuery}%") ||
+                    EF.Functions.Like(e.Tckn, $"{searchQuery}%"))
                 .OrderBy(e => e.Id)
                 .Skip(0)
                 .Take(50)
@@ -94,8 +99,9 @@ namespace hris.Staff.Application.Service
 
             _employeePasswordService.CreatePasswordHash(createEmployeeDto.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
+            PhoneNumberType mobilePhone = await _phoneNumberTypeService.GetMobileAsync();
             EmailType personalEmail = await _emailTypeService.GetPersonalAsync();
-            Position developerPosition = await _positionService.GetSoftwareDeveloperPositionAsync();
+            Position position = await _positionService.GetByIdThrowAsync(createEmployeeDto.PositionId);
 
 
             var newEmployee = new Employee
@@ -106,6 +112,14 @@ namespace hris.Staff.Application.Service
                 DateOfBirth = createEmployeeDto.DateOfBirth,
                 CreatedAt = createdAt,
             };
+
+
+            newEmployee.PhoneNumbers.Add(new EmployeePhoneNumber()
+            {
+                PhoneNumber = createEmployeeDto.PhoneNumber,
+                PhoneNumberType= mobilePhone,
+                CreatedAt = createdAt              
+            });
 
 
             newEmployee.Emails.Add(new EmployeeEmail()
@@ -126,7 +140,7 @@ namespace hris.Staff.Application.Service
 
             newEmployee.Positions.Add(new EmployeePosition()
             {
-                Position = developerPosition,
+                Position = position,
                 StartDate = createdAt
             });
 
@@ -134,6 +148,28 @@ namespace hris.Staff.Application.Service
             await _context.SaveChangesAsync();
 
             return newEmployee;
+        }
+
+
+        public async Task UpdateAsync(UpdateEmployeeDto updateEmployeeDto)
+        {
+            Employee employee = await GetByIdAsync(updateEmployeeDto.Id);
+
+            employee.DateOfBirth = updateEmployeeDto.DateOfBirth;
+            employee.FirstName = updateEmployeeDto.FirstName;
+            employee.LastName = updateEmployeeDto.LastName;
+            employee.Tckn = updateEmployeeDto.Tckn;
+
+            _context.Employees.Remove(employee);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(int employeeId)
+        {
+            Employee employee = await GetByIdAsync(employeeId);
+
+            _context.Employees.Remove(employee);
+            await _context.SaveChangesAsync();
         }
 
 

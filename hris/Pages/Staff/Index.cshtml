@@ -3,66 +3,87 @@
 @{
 }
 
-<section class="overflow-scroll h-full flex-1 p-4">
-    <header class="flex justify-between items-center mb-6">
+<section class="overflow-hidden h-full flex-1 p-5 flex flex-col">
+
+    <nav class="flex items-center text-gray-500 space-x-2 my-6">
+        @foreach (var breadcrumb in Model.Breadcrumbs)
+        {
+            if (!string.IsNullOrEmpty(breadcrumb.Url))
+            {
+                <a href="@breadcrumb.Url" class="hover:text-blue-500">@breadcrumb.Name</a>
+                <span>/</span>
+            }
+            else
+            {
+                <span class="text-gray-800 font-semibold">@breadcrumb.Name</span>
+            }
+        }
+    </nav>
+
+
+@*     <header class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-semibold text-gray-800">@Model.Title</h1>
         <p class="text-sm text-gray-500">Welcome, @Model.Message</p>
-    </header>
+    </header> *@
 
     <section class="flex justify-end py-8">
+
         <a href="/staff/create"
            class="
-            flex bg-blue-500 text-white px-4 py-3 
-            rounded-md shadow-md hover:bg-blue-600 focus:
+            flex items-center bg-white text-blue-500 px-4 py-3
+            rounded-md shadow-md hover:bg-gray-100 focus:
             outline-none focus:ring-2 focus:ring-blue-400">
-           <span class="mr-3">
-                Create Employee
-           </span>
-           
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-plus text-blue-500"><circle cx="12" cy="12" r="10" /><path d="M8 12h8" /><path d="M12 8v8" /></svg>
 
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-plus"><circle cx="12" cy="12" r="10" /><path d="M8 12h8" /><path d="M12 8v8" /></svg>
+            <span class="ml-3">
+                Create Employee
+            </span>
         </a>
     </section>
 
 
     <section class="py-4">
-        <div class="max-w-md">
+        <div class="w-[20rem]">
             <input type="text"
                    id="searchInput"
                    placeholder="Search..."
-                   class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
+                   class=" mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
         </div>
     </section>
 
-    <table id="employeeTable" class="min-w-full table-auto border-collapse border border-gray-300">
-        <thead>
-            <tr class="bg-gray-100 border-b">
-                <th class="border border-gray-300 px-4 py-2 text-left">#</th>
-                <th class="border border-gray-300 px-4 py-2 text-left">First Name</th>
-                <th class="border border-gray-300 px-4 py-2 text-left">Last Name</th>
-                <th class="border border-gray-300 px-4 py-2 text-left">TCKN</th>
-                <th class="border border-gray-300 px-4 py-2 text-left">Date of Birth</th>
-                <th class="border border-gray-300 px-4 py-2 text-left">Actions</th>
-            </tr>
-        </thead>
-        <tbody id="employeeTableBody">
-            @foreach (var employee in Model.Employees)
-            {
-                <tr class="border-b hover:bg-gray-50">
-                    <td class="border border-gray-300 px-4 py-2">@employee.Id</td>
-                    <td class="border border-gray-300 px-4 py-2">@employee.FirstName</td>
-                    <td class="border border-gray-300 px-4 py-2">@employee.LastName</td>
-                    <td class="border border-gray-300 px-4 py-2">@employee.Tckn</td>
-                    <td class="border border-gray-300 px-4 py-2">@employee.DateOfBirth.ToShortDateString()</td>
-                    <td class="border border-gray-300 px-4 py-2">
-                        <a href="/employee/details/@employee.Id" class="text-blue-500 hover:underline">Details</a> |
-                        <a href="/employee/edit/@employee.Id" class="text-green-500 hover:underline">Edit</a> |
-                        <a href="/employee/delete/@employee.Id" class="text-red-500 hover:underline">Delete</a>
-                    </td>
+    <div class="flex-1 overflow-scroll">
+        <table id="employeeTable" class="min-w-full table-auto border-collapse border border-gray-300">
+            <thead>
+                <tr class="bg-gray-100 border-b">
+                    <th class="border border-gray-300 px-4 py-2 text-left">#</th>
+                    <th class="border border-gray-300 px-4 py-2 text-left">First Name</th>
+                    <th class="border border-gray-300 px-4 py-2 text-left">Last Name</th>
+                    <th class="border border-gray-300 px-4 py-2 text-left">TCKN</th>
+                    <th class="border border-gray-300 px-4 py-2 text-left">Date of Birth</th>
+                    <th class="border border-gray-300 px-4 py-2 text-left">Actions</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody id="employeeTableBody">
+                @foreach (var employee in Model.Employees)
+                {
+                    <tr class="border-b hover:bg-gray-50">
+                        <td class="border border-gray-300 px-4 py-2">@employee.Id</td>
+                        <td class="border border-gray-300 px-4 py-2">@employee.FirstName</td>
+                        <td class="border border-gray-300 px-4 py-2">@employee.LastName</td>
+                        <td class="border border-gray-300 px-4 py-2">@employee.Tckn</td>
+                        <td class="border border-gray-300 px-4 py-2">@employee.DateOfBirth.ToShortDateString()</td>
+                        <td class="border border-gray-300 px-4 py-2">
+                            <a href="/employee/details/@employee.Id" class="text-blue-500 hover:underline">Details</a>
+                            <span class="mx-4"> |</span>
+                            <a href="/employee/edit/@employee.Id" class="text-green-500 hover:underline">Edit</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+
 
 
     <script>

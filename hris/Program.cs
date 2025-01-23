@@ -1,5 +1,5 @@
 using hris.Database;
-using hris.Security.Application.Service;
+using hris.Security.Application.Command;
 using hris.Security.Middleware;
 using hris.Seed.Application.Service;
 using hris.Staff.Application.Service;
@@ -11,12 +11,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddScoped<EmployeeValidator>();
+builder.Services.AddScoped<TokenGenerator>();
+builder.Services.AddScoped<TokenValidator>();
+builder.Services.AddScoped<EmployeeTokenService>();
 
-builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<SeedService>();
+
 builder.Services.AddScoped<EmployeeService>();
 builder.Services.AddScoped<EmployeeEmailService>();
 builder.Services.AddScoped<EmployeePasswordService>();
+
 builder.Services.AddScoped<EmailTypeService>();
 builder.Services.AddScoped<PhoneNumberTypeService>();
 builder.Services.AddScoped<DepartmentService>();

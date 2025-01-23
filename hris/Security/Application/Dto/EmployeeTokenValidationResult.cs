@@ -3,7 +3,7 @@ using System.Security.Claims;
 
 namespace hris.Security.Application.Dto
 {
-    public class TokenValidationEmployeeResult
+    public class EmployeeTokenValidationResult
     {
         public bool IsValid { get; set; }
         public ClaimsPrincipal Principal { get; set; }

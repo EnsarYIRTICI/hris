@@ -1,0 +1,208 @@
+﻿@page
+@model hris.Pages.Staff.Create.IndexModel
+@{
+}
+
+<section class="overflow-y-auto overflow-x-hidden h-full flex-1 p-5">
+
+    <nav class="flex items-center text-gray-500 space-x-2 my-6">
+        @foreach (var breadcrumb in Model.Breadcrumbs)
+        {
+            if (!string.IsNullOrEmpty(breadcrumb.Url))
+            {
+                <a href="@breadcrumb.Url" class="hover:text-blue-500">@breadcrumb.Name</a>
+                <span>/</span>
+            }
+            else
+            {
+                <span class="text-gray-800 font-semibold">@breadcrumb.Name</span>
+            }
+        }
+    </nav>
+
+    <div class="md:w-[35rem] p-6 m-8 bg-white rounded-xl shadow-md space-y-4">
+        <h1 class="text-2xl font-bold text-gray-700">Create Employee</h1>
+
+        <!-- Error Message -->
+
+        @if (!ModelState.IsValid || !string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg" role="alert">
+                @if (!ModelState.IsValid)
+                {
+                    <p>Lütfen aşağıdaki hataları düzeltin:</p>
+                    <ul class="mt-2 list-disc list-inside">
+                        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                        {
+                            <li>@error.ErrorMessage</li>
+                        }
+                    </ul>
+                }
+                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                {
+                    <p>@Model.ErrorMessage</p>
+                }
+            </div>
+        }
+
+        <!-- Success Message -->
+
+        @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+        {
+            <div class="p-4 mb-4 text-sm text-green-700 bg-green-100 rounded-lg" role="alert">
+                <p>@Model.SuccessMessage</p>
+            </div>
+        }
+
+        <form method="post" class="flex flex-wrap justify-between">
+
+            <section class="w-full md:w-[15rem] space-y-4 md:mr-8 mb-8">
+                <div>
+                    <label for="firstName" class="block text-sm font-medium text-gray-700">First Name</label>
+                    <input type="text"
+                           id="firstName"
+                           name="FirstName"
+                           value="@Model.CreateEmployee.FirstName"
+                           required
+                           maxlength="100"
+                           class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
+                </div>
+
+                <div>
+                    <label for="lastName" class="block text-sm font-medium text-gray-700">Last Name</label>
+                    <input type="text"
+                           id="lastName"
+                           name="LastName"
+                           value="@Model.CreateEmployee.LastName"
+                           required
+                           maxlength="100"
+                           class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
+                </div>
+
+                <div>
+                    <label for="tckn" class="block text-sm font-medium text-gray-700">T.C. Identity Number</label>
+                    <input type="text"
+                           id="tckn"
+                           name="Tckn"
+                           value="@Model.CreateEmployee.Tckn"
+                           required
+                           maxlength="200"
+                           class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
+                </div>
+
+
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                    <input type="password"
+                           id="password"
+                           name="Password"
+                           value="@Model.CreateEmployee.Password"
+                           required
+                           minlength="8"
+                           class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
+                </div>
+
+                <div>
+                    <label for="dateOfBirth" class="block text-sm font-medium text-gray-700">Date of Birth</label>
+                    <input type="date"
+                           id="dateOfBirth"
+                           name="DateOfBirth"
+                           value="@Model.CreateEmployee.DateOfBirth"
+                           required
+                           class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
+                </div>
+
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                    <input type="email"
+                           id="email"
+                           name="Email"
+                           value="@Model.CreateEmployee.Email"
+                           required
+                           maxlength="200"
+                           class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
+                </div>
+
+                <div>
+                    <label for="phoneNumber" class="block text-sm font-medium text-gray-700">Phone Number</label>
+                    <input type="text"
+                           id="phoneNumber"
+                           name="PhoneNumber"
+                           value="@Model.CreateEmployee.PhoneNumber"
+                           required
+                           maxlength="15"
+                           class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
+                </div>
+
+
+
+            </section>
+
+
+            <section class="w-full md:w-[15rem] space-y-4 flex flex-col">
+                <div>
+                    <label for="department" class="block text-sm font-medium text-gray-700">Department</label>
+                    <select id="department"
+                            name="DepartmentId"
+                            required
+                            class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white">
+                        <option value="">Select Department</option>
+                        @foreach (var department in Model.Departments)
+                        {
+                            <option value="@department.Id">@department.Name</option>
+                        }
+                    </select>
+                </div>
+
+                <div>
+                    <label for="position" class="block text-sm font-medium text-gray-700">Position</label>
+                    <select id="position"
+                            name="PositionId"
+                            required
+                            class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white">
+                        <option value="">Select Position</option>
+                        @foreach (var position in Model.Positions)
+                        {
+                            <option value="@position.Id">@position.Name</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="flex-1"></div>
+
+                <div class="pt-4">
+                    <button type="submit"
+                            class="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                        Submit
+                    </button>
+                </div>
+
+            </section>           
+        </form>
+
+    </div>
+
+    <script>
+
+        document.getElementById('department').addEventListener('input', function () {
+            const searchTerm = this.value;
+
+            fetch(`/staff/create/index?DepartmentId=${encodeURIComponent(searchTerm)}`, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+
+                    const positionElement = doc.getElementById('position');
+                    document.getElementById('position').innerHTML = positionElement.innerHTML;
+                })
+                .catch(error => console.error('Error fetching search results:', error));
+        });
+    </script>
+</section>
+

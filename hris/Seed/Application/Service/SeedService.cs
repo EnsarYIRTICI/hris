@@ -13,38 +13,24 @@ namespace hris.Seed.Application.Service
 {
     public class SeedService
     {
-        private readonly AppDbContext _context;
         private readonly EmployeeService _employeeService;
-        private readonly EmailTypeService _emailTypeService;
-        private readonly EmployeePasswordService _employeePasswordService;
-        private readonly PositionService _positionService;
 
-        public SeedService(
-            AppDbContext context,
-            EmailTypeService emailTypeService,
-            EmployeePasswordService employeePasswordService,
-            PositionService positionService,
-            EmployeeService employeeService
-            )
+        public SeedService(EmployeeService employeeService)
         {
-            _context = context;
-            _emailTypeService = emailTypeService;
-            _employeePasswordService = employeePasswordService;
-            _positionService = positionService;
             _employeeService = employeeService;
         }
 
         public async Task<Employee> SeedAdminEmployeeAsync()
         {
 
-            // Çalışanı kontrol et
+            // Admin Çalışanı kontrol et
 
             Employee? existingEmployee = await _employeeService.GetByTcknAsync("12345678901");
 
             if (existingEmployee == null)
             {
 
-                // Yeni çalışan oluştur
+                // Yeni Admin çalışan oluştur
 
                 var newEmployee = await _employeeService.CreateAsync(new CreateEmployeeDto()
                 {

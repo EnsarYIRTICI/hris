@@ -12,16 +12,6 @@ public class EmailTypeService
         _context = context;
     }
 
-    public async Task<EmailType> GetByNameOrThrowAsync(string name)
-    {
-        var email = await _context.EmailTypes.FirstOrDefaultAsync(e => e.Name == name);
-
-        if (email == null)
-        {
-            throw new EmailTypeNotFoundException();
-        }
-        return email;
-    }
 
     public async Task<EmailType> GetPersonalAsync()
     {
@@ -36,10 +26,27 @@ public class EmailTypeService
     }
 
 
-    public async Task<EmailType?> GetByIdAsync(int id)
+    public async Task<EmailType> GetByNameOrThrowAsync(string name)
     {
-        return await _context.EmailTypes.FirstOrDefaultAsync(e => e.Id == id);
+        var email = await _context.EmailTypes.FirstOrDefaultAsync(e => e.Name == name);
+        if (email == null)
+        {
+            throw new EmailTypeNotFoundException();
+        }
+        return email;
     }
+
+
+    public async Task<EmailType?> GetByIdOrThrowAsync(int id)
+    {
+        var email = await _context.EmailTypes.FirstOrDefaultAsync(e => e.Id == id);
+        if (email == null)
+        {
+            throw new EmailTypeNotFoundException();
+        }
+        return email;
+    }
+
 
  
     public async Task<List<EmailType>> GetAllAsync()

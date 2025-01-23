@@ -3,23 +3,32 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using hris.Staff.Domain.Entities;
 using hris.Staff.Application.Service;
-using hris.Security.Application.Service;
 using hris.Database;
+using hris.Staff.Domain.Exceptions;
 
 namespace hris.Pages
 {
     public class LoginModel : PageModel
     {
         private readonly AppDbContext _context;
+        private readonly EmployeeService _employeeService;
         private readonly EmployeePasswordService _passwordService;
-        private readonly TokenService _tokenService;
+        private readonly EmployeeTokenService _tokenService;
+        private readonly int _tokenLifetimeInDays;
 
-        public LoginModel(AppDbContext context, EmployeePasswordService passwordService, TokenService tokenService) 
+        public LoginModel(
+            IConfiguration configuration, 
+            AppDbContext context,
+            EmployeePasswordService passwordService,
+            EmployeeTokenService tokenService,
+            EmployeeService employeeService
+            )
         {
+            _tokenLifetimeInDays = int.Parse(configuration["TokenLifetimeInDays"] ?? "1");
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _passwordService = passwordService ?? throw new ArgumentNullException(nameof(passwordService));
             _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService));
-
+            _employeeService = employeeService;
         }
 
 
@@ -34,7 +43,7 @@ namespace hris.Pages
             public string Password { get; set; }
         }
 
-        public IActionResult OnPost()
+        public async Task<IActionResult> OnPostAsync()
         {
 
             try {
@@ -43,7 +52,7 @@ namespace hris.Pages
                     return Page();
                 }
 
-                // Kullanıcının giriş bilgilerini kontrol etmek
+                // E-Postayı doğrula
                 var employeeEmail = _context.EmployeeEmails
                         .FirstOrDefault(e => e.Email == Input.Email && e.IsValid);
 
@@ -64,10 +73,9 @@ namespace hris.Pages
                 }
 
                 // Çalışan bilgilerini al
-                var employee = _context.Employees.Find(employeeEmail.EmployeeId);
+                var employee = await _employeeService.GetByIdAsync(employeeEmail.EmployeeId);
 
                 // Token oluştur
-             
                 var token = _tokenService.GenerateToken(employee);
 
                 Console.WriteLine("TOKEN --> ", token);
@@ -77,7 +85,7 @@ namespace hris.Pages
                 {
                     HttpOnly = true,
                     Secure = true,
-                    Expires = DateTime.UtcNow.AddDays(7),
+                    Expires = DateTime.UtcNow.AddDays(_tokenLifetimeInDays),
                 });
 
                 // Giriş başarılı, ana sayfaya yönlendir
@@ -85,6 +93,7 @@ namespace hris.Pages
             }
             catch (Exception ex) {
                 ErrorMessage = ex.Message;
+
                 return Page();
             }
 

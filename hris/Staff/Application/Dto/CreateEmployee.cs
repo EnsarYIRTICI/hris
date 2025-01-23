@@ -20,6 +20,9 @@ namespace hris.Staff.Application.Dto
         [EmailAddress]
         public string Email { get; set; } // Email adresi
 
+        [Required, Phone, MaxLength(15)]
+        public string PhoneNumber { get; set; } // Telefon numarası
+
         [Required, MinLength(8)]
         public string Password { get; set; } // Şifre
 

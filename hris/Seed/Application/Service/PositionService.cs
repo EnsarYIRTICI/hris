@@ -2,6 +2,7 @@
 using hris.Seed.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using hris.Database;
+using hris.Staff.Domain.Entities;
 
 namespace hris.Seed.Application.Service
 {
@@ -12,17 +13,6 @@ namespace hris.Seed.Application.Service
         public PositionService(AppDbContext context)
         {
             _context = context;
-        }
-
-
-        private async Task<Position> GetByNameOrThrowAsync(string name)
-        {
-            var position = await _context.Positions.FirstOrDefaultAsync(p => p.Name == name);
-            if (position == null)
-            {
-                throw new PositionNotFoundException(name);
-            }
-            return position;
         }
 
 
@@ -37,6 +27,34 @@ namespace hris.Seed.Application.Service
             return await GetByNameOrThrowAsync("Software Developer");
         }
 
+
+        private async Task<Position> GetByNameOrThrowAsync(string name)
+        {
+            var position = await _context.Positions.FirstOrDefaultAsync(p => p.Name == name);
+            if (position == null)
+            {
+                throw new PositionNotFoundException(name);
+            }
+            return position;
+        }
+
+        public async Task<Position> GetByIdThrowAsync(int positionId)
+        {
+           var position = await _context.Positions.FirstOrDefaultAsync(p => p.Id == positionId);
+            if (position == null)
+            {
+                throw new PositionNotFoundException(positionId);
+            }
+            return position;
+        }
+
+        public async Task<List<Position>> GetAllByDepartmentIdAsync(int departmentId)
+        {
+            return await _context.Positions
+                .Where(d=>d.DepartmentId == departmentId)
+                .Include(p => p.Department)
+                .ToListAsync();
+        }
 
         public async Task<List<Position>> GetAllAsync()
         {

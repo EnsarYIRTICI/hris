@@ -13,7 +13,10 @@ namespace hris.Staff.Domain.Entities
         public int EmployeeId { get; set; } // Foreign Key to Employee
 
         [Required, MaxLength(15)]
-        public string Number { get; set; } // Telefon numarası
+        public string PhoneNumber { get; set; } // Telefon numarası
+
+        [Required]
+        public DateTime CreatedAt { get; set; } // Employee Oluşturulma Tarihi
 
         [Required]
         public int PhoneNumberTypeId { get; set; } // Foreign Key to PhoneNumberType
