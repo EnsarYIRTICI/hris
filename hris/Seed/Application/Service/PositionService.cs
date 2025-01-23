@@ -15,7 +15,6 @@ namespace hris.Seed.Application.Service
             _context = context;
         }
 
-
         public async Task<Position> GetAdminPositionAsync()
         {
             return await GetByNameOrThrowAsync("Yönetici");
@@ -27,6 +26,10 @@ namespace hris.Seed.Application.Service
             return await GetByNameOrThrowAsync("Software Developer");
         }
 
+        public async Task<int> GetTotalPositionsAsync()
+        {
+            return await _context.Positions.CountAsync();
+        }
 
         private async Task<Position> GetByNameOrThrowAsync(string name)
         {

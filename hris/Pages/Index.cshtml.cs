@@ -1,22 +1,36 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using hris.Staff.Application.Service;
+using hris.Seed.Application.Service;
+using hris.DepartmentModule.Application.Service;
 
 namespace hris.Pages
 {
     public class IndexModel : PageModel
     {
+        private readonly EmployeeService _employeeService;
+        private readonly DepartmentService _departmentService;
+        private readonly PositionService _positionService;
+
         public string Title { get; set; } = "Dashboard";
         public string Message { get; set; } = "Hello from Hris!";
 
-        private readonly ILogger<IndexModel> _logger;
+        public int TotalEmployees { get; set; }
+        public int TotalDepartments { get; set; }
+        public int TotalPositions { get; set; }
 
-        public IndexModel(ILogger<IndexModel> logger)
+        public IndexModel(EmployeeService employeeService, DepartmentService departmentService, PositionService positionService)
         {
-            _logger = logger;
+            _employeeService = employeeService;
+            _departmentService = departmentService;
+            _positionService = positionService;
         }
 
-        public void OnGet()
+        public async Task OnGetAsync()
         {
+            TotalEmployees = await _employeeService.GetTotalEmployeesAsync();
+            TotalDepartments = await _departmentService.GetTotalDepartmentsAsync();
+            TotalPositions = await _positionService.GetTotalPositionsAsync();
 
         }
     }

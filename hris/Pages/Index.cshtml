@@ -18,7 +18,7 @@
 
         <article class="bg-white shadow-md rounded-lg p-4">
             <h2 class="text-lg font-semibold text-gray-700">Employees</h2>
-            <p class="mt-2 text-3xl font-bold text-indigo-600">120</p>
+            <p class="mt-2 text-3xl font-bold text-indigo-600">@Model.TotalEmployees</p>
             <p class="mt-1 text-sm text-gray-500">Total employees</p>
         </article>
 
@@ -26,8 +26,16 @@
 
         <article class="bg-white shadow-md rounded-lg p-4">
             <h2 class="text-lg font-semibold text-gray-700">Departments</h2>
-            <p class="mt-2 text-3xl font-bold text-indigo-600">8</p>
+            <p class="mt-2 text-3xl font-bold text-indigo-600">@Model.TotalDepartments</p>
             <p class="mt-1 text-sm text-gray-500">Active departments</p>
+        </article>
+
+        <!-- Pozisyon Kartı -->
+
+        <article class="bg-white shadow-md rounded-lg p-4">
+            <h2 class="text-lg font-semibold text-gray-700">Positions</h2>
+            <p class="mt-2 text-3xl font-bold text-indigo-600">@Model.TotalPositions</p>
+            <p class="mt-1 text-sm text-gray-500">Total positions</p>
         </article>
     </section>
 

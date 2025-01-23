@@ -5,6 +5,11 @@ using hris.Seed.Application.Service;
 using hris.Staff.Application.Service;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using System.Reflection;
+using MediatR;
+using AutoMapper;
+using hris.Staff.Application.Mapping;
+using hris.DepartmentModule.Application.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +31,9 @@ builder.Services.AddScoped<EmailTypeService>();
 builder.Services.AddScoped<PhoneNumberTypeService>();
 builder.Services.AddScoped<DepartmentService>();
 builder.Services.AddScoped<PositionService>();
+
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
 
 builder.Services.AddAuthorization();

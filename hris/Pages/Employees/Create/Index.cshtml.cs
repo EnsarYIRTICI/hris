@@ -1,9 +1,15 @@
+using AutoMapper;
+using hris.DepartmentModule.Application.Service;
+using hris.DepartmentModule.Domain.Entities;
 using hris.Pages.PageModels;
 using hris.Seed.Application.Service;
 using hris.Seed.Domain.Entities;
+using hris.Staff.Application.Command;
 using hris.Staff.Application.Dto;
 using hris.Staff.Application.Service;
 using hris.Staff.Domain.Entities;
+using MediatR;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -33,12 +39,17 @@ namespace hris.Pages.Employees.Create
         private readonly DepartmentService _departmentService;
         private readonly PositionService _positionService;
 
+        private readonly IMapper _mapper;
+        private readonly IMediator _mediator;
+
         public IndexModel(
             EmployeeService employeeService,     
             EmailTypeService emailTypeService,
             PhoneNumberTypeService phoneNumberTypeService,
             DepartmentService departmentService,
-            PositionService positionService
+            PositionService positionService,
+            IMapper mapper,
+            IMediator mediator
             )
         {
             _employeeService = employeeService;       
@@ -46,6 +57,9 @@ namespace hris.Pages.Employees.Create
             _phoneNumberTypeService = phoneNumberTypeService;
             _departmentService = departmentService;
             _positionService = positionService;
+
+            _mapper = mapper;
+            _mediator = mediator;
 
         }
 
@@ -100,23 +114,23 @@ namespace hris.Pages.Employees.Create
                 if (!ModelState.IsValid)
                 {
                     await Init(false);
-
                     return Page();
                 }
 
-                var newEmployee = await _employeeService.CreateAsync(CreateEmployee);
+                var command = _mapper.Map<CreateEmployeeCommand>(CreateEmployee);
+                var employee = await _mediator.Send(command);
 
                 SuccessMessage = "Employee created successfully!";
-
-                await Init();
 
             }
             catch (Exception ex) 
             {
+
                 ErrorMessage = ex.Message;   
                 
             }
 
+            await Init();
             return Page();
         }
 

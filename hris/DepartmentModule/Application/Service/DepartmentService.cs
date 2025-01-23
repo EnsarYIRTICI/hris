@@ -1,10 +1,10 @@
 ﻿using hris.Database;
-using hris.Seed.Domain.Entities;
+using hris.DepartmentModule.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace hris.Seed.Application.Service
+namespace hris.DepartmentModule.Application.Service
 {
     public class DepartmentService
     {
@@ -15,6 +15,10 @@ namespace hris.Seed.Application.Service
             _context = context;
         }
 
+        public async Task<int> GetTotalDepartmentsAsync()
+        {
+            return await _context.Departments.CountAsync();
+        }
 
         public async Task<List<Department>> GetAllAsync()
         {

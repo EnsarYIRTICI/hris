@@ -8,7 +8,7 @@ namespace hris.Pages.Employees
 {
     public class IndexModel : BreadcrumbPageModel
     {
-        public string Title { get; set; } = "Employee";
+        public string Title { get; set; } = "Employees";
         public string Message { get; set; } = "Manage Employees";
 
         private readonly EmployeeService _employeeService;

@@ -36,6 +36,11 @@ namespace hris.Staff.Application.Service
             _phoneNumberTypeService = phoneNumberTypeService;
         }
 
+        public async Task<int> GetTotalEmployeesAsync()
+        {
+            return await _context.Employees.CountAsync();
+        }
+
 
         public async Task<List<Employee>> SearchByFullNameOrTcknAsync(string searchQuery)
         {
@@ -117,8 +122,8 @@ namespace hris.Staff.Application.Service
             newEmployee.PhoneNumbers.Add(new EmployeePhoneNumber()
             {
                 PhoneNumber = createEmployeeDto.PhoneNumber,
-                PhoneNumberType= mobilePhone,
-                CreatedAt = createdAt              
+                PhoneNumberType = mobilePhone,
+                CreatedAt = createdAt
             });
 
 

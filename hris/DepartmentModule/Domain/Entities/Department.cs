@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using hris.Seed.Domain.Entities;
 
-namespace hris.Seed.Domain.Entities
+namespace hris.DepartmentModule.Domain.Entities
 {
     public class Department
     {
