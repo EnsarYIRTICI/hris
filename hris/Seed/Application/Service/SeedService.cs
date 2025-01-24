@@ -1,8 +1,11 @@
-﻿using hris.Database;
+﻿using AutoMapper;
+using hris.Database;
 using hris.Seed.Domain.Entities;
+using hris.Staff.Application.Command;
 using hris.Staff.Application.Dto;
 using hris.Staff.Application.Service;
 using hris.Staff.Domain.Entities;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
@@ -14,6 +17,9 @@ namespace hris.Seed.Application.Service
     public class SeedService
     {
         private readonly EmployeeService _employeeService;
+
+        private readonly IMapper _mapper;
+        private readonly IMediator _mediator;
 
         public SeedService(EmployeeService employeeService)
         {
@@ -32,21 +38,29 @@ namespace hris.Seed.Application.Service
 
                 // Yeni Admin çalışan oluştur
 
-                var newEmployee = await _employeeService.CreateAsync(new CreateEmployeeDto()
+                var createEmployeeDto = new CreateEmployeeDto()
                 {
 
                     FirstName = "Ahmet",
                     LastName = "Yılmaz",
                     Tckn = "12345678901",
-                    DateOfBirth = new DateTime(1985, 5, 15),
-                    Email = "turing@turing.com",
+                    Emails = new List<EmailDto>()
+                    {
+                        new EmailDto
+                        {
+                            Email = "turing@turing.com",
+                            EmailTypeId = 2
+                        }
+                    },
                     Password = "turing",
-                    EmailTypeId = 2,
                     PositionId = 1,
 
-                });
+                };
 
-                return newEmployee;
+                var command = _mapper.Map<CreateEmployeeCommand>(createEmployeeDto);
+                var employee = await _mediator.Send(command);
+
+                return employee;
 
             }
 

@@ -34,13 +34,12 @@ namespace hris.Staff.Application.Command
 
         public async Task<Employee> Handle(CreateEmployeeCommand request, CancellationToken cancellationToken)
         {
+            // Tarih
+
             var createdAt = DateTime.UtcNow;
 
-            _employeePasswordService.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
-            PhoneNumberType mobilePhone = await _phoneNumberTypeService.GetMobileAsync();
-            EmailType personalEmail = await _emailTypeService.GetPersonalAsync();
-            Position position = await _positionService.GetByIdThrowAsync(request.PositionId);
+            // Yeni çalışan nesnesi oluşturma
 
             var newEmployee = new Employee
             {
@@ -51,34 +50,60 @@ namespace hris.Staff.Application.Command
                 CreatedAt = createdAt,
             };
 
-            newEmployee.PhoneNumbers.Add(new EmployeePhoneNumber
-            {
-                PhoneNumber = request.PhoneNumber,
-                PhoneNumberType = mobilePhone,
-                CreatedAt = createdAt
-            });
+            // Telefonlar ekleniyor (Birden fazla telefon için döngü ekledik)
 
-            newEmployee.Emails.Add(new EmployeeEmail
+            for (int i = 0; i < request.PhoneNumbers.Count; i++)
             {
-                Email = request.Email,
-                IsApproved = true,
-                IsValid = true,
-                CreatedAt = createdAt,
-                EmailType = personalEmail
-            });
+                var phoneNumber = request.PhoneNumbers[i];
+                var phoneNumberType = await _phoneNumberTypeService.GetByIdOrThrowAsync(phoneNumber.PhoneTypeId);
+
+                newEmployee.PhoneNumbers.Add(new EmployeePhoneNumber
+                {
+                    PhoneNumber = phoneNumber.PhoneNumber,
+                    PhoneNumberType = phoneNumberType,
+                    CreatedAt = createdAt,
+                });
+            }
+
+            // E-postalar ekleniyor (Birden fazla e-posta için döngü ekledik)
+
+            for (int i = 0; i < request.Emails.Count; i++)
+            {
+                var email = request.Emails[i];
+                var emailType = await _emailTypeService.GetByIdOrThrowAsync(email.EmailTypeId);
+
+                newEmployee.Emails.Add(new EmployeeEmail
+                {
+                    Email = email.Email,
+                    EmailType = emailType,
+                    IsValid = i == 0, // İlk e-posta varsayılan olarak geçerli kabul edilir
+                    IsApproved = true,
+                    CreatedAt = createdAt,
+                });
+            }
+
+            // Şifre ekleniyor
+
+            _employeePasswordService.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
             newEmployee.Passwords.Add(new EmployeePassword
             {
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt,
-                CreatedAt = createdAt
+                CreatedAt = createdAt,
             });
+
+            // Pozisyon ekleniyor
+
+            var position = await _positionService.GetByIdThrowAsync(request.PositionId);
 
             newEmployee.Positions.Add(new EmployeePosition
             {
                 Position = position,
-                StartDate = createdAt
+                StartDate = createdAt,
             });
+
+            // Veritabanına kaydetme
 
             await _context.Employees.AddAsync(newEmployee, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);

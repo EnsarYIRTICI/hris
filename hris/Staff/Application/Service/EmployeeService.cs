@@ -76,6 +76,28 @@ namespace hris.Staff.Application.Service
             return employee;
         }
 
+        public async Task<Employee> GetByIdWithDetailsAsync(int employeeId)
+        {
+            Employee? employee = await _context.Employees
+             .Include(e => e.Passwords)
+             .Include(e => e.Emails)
+             .Include(e => e.Addresses)
+             .Include(e => e.PhoneNumbers)
+             .Include(e => e.Banks)
+             .Include(e => e.Educations)
+             .Include(e => e.Relatives)
+             .Include(e => e.Positions)
+             .Include(e => e.Documents)
+             .FirstOrDefaultAsync(e => e.Id == employeeId);
+
+            if (employee == null)
+            {
+                throw new EmployeeNotFoundException();
+            }
+
+            return employee;
+        }
+
 
         public async Task<Employee?> GetByTcknAsync(string Tckn)
         {
@@ -97,64 +119,6 @@ namespace hris.Staff.Application.Service
                 Email = validatedEmail.Email
             };
         }
-
-        public async Task<Employee> CreateAsync(CreateEmployeeDto createEmployeeDto)
-        {
-            var createdAt = DateTime.UtcNow;
-
-            _employeePasswordService.CreatePasswordHash(createEmployeeDto.Password, out byte[] passwordHash, out byte[] passwordSalt);
-
-            PhoneNumberType mobilePhone = await _phoneNumberTypeService.GetMobileAsync();
-            EmailType personalEmail = await _emailTypeService.GetPersonalAsync();
-            Position position = await _positionService.GetByIdThrowAsync(createEmployeeDto.PositionId);
-
-
-            var newEmployee = new Employee
-            {
-                FirstName = createEmployeeDto.FirstName,
-                LastName = createEmployeeDto.LastName,
-                Tckn = createEmployeeDto.Tckn,
-                DateOfBirth = createEmployeeDto.DateOfBirth,
-                CreatedAt = createdAt,
-            };
-
-
-            newEmployee.PhoneNumbers.Add(new EmployeePhoneNumber()
-            {
-                PhoneNumber = createEmployeeDto.PhoneNumber,
-                PhoneNumberType = mobilePhone,
-                CreatedAt = createdAt
-            });
-
-
-            newEmployee.Emails.Add(new EmployeeEmail()
-            {
-                Email = createEmployeeDto.Email,
-                IsApproved = true,
-                IsValid = true,
-                CreatedAt = createdAt,
-                EmailType = personalEmail,
-            });
-
-            newEmployee.Passwords.Add(new EmployeePassword()
-            {
-                PasswordHash = passwordHash,
-                PasswordSalt = passwordSalt,
-                CreatedAt = createdAt,
-            });
-
-            newEmployee.Positions.Add(new EmployeePosition()
-            {
-                Position = position,
-                StartDate = createdAt
-            });
-
-            await _context.Employees.AddAsync(newEmployee);
-            await _context.SaveChangesAsync();
-
-            return newEmployee;
-        }
-
 
         public async Task UpdateAsync(UpdateEmployeeDto updateEmployeeDto)
         {

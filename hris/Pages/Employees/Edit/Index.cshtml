@@ -1,0 +1,25 @@
+﻿@page "{id:int}"
+@model hris.Pages.Employees.Edit.IndexModel
+@{
+}
+
+
+<div class="flex-1 p-5">
+
+    <nav class="flex items-center text-gray-500 space-x-2 my-6">
+        @foreach (var breadcrumb in Model.Breadcrumbs)
+        {
+            if (!string.IsNullOrEmpty(breadcrumb.Url))
+            {
+                <a href="@breadcrumb.Url" class="hover:text-blue-500">@breadcrumb.Name</a>
+                <span>/</span>
+            }
+            else
+            {
+                <span class="text-gray-800 font-semibold">@breadcrumb.Name</span>
+            }
+        }
+    </nav>
+
+
+</div>

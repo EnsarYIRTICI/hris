@@ -1,0 +1,100 @@
+﻿@page "{id:int}"
+@model hris.Pages.Employees.Details.IndexModel
+@{
+    ViewData["Title"] = "Employee Details";
+}
+
+<div class="flex-1 p-5">
+
+    <nav class="flex items-center text-gray-500 space-x-2 my-6">
+        @foreach (var breadcrumb in Model.Breadcrumbs)
+        {
+            if (!string.IsNullOrEmpty(breadcrumb.Url))
+            {
+                <a href="@breadcrumb.Url" class="hover:text-blue-500">@breadcrumb.Name</a>
+                <span>/</span>
+            }
+            else
+            {
+                <span class="text-gray-800 font-semibold">@breadcrumb.Name</span>
+            }
+        }
+    </nav>
+
+    <div class="max-w-4xl mx-auto bg-white shadow-md rounded-lg overflow-hidden">
+        <div class="bg-gradient-to-r from-blue-300 to-purple-500 text-white text-center py-4">
+            <h1 class="text-2xl font-bold">Employee Details</h1>
+        </div>
+
+        <div class="p-6">
+            <h2 class="text-xl font-semibold mb-4">Personal Information</h2>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <p class="text-gray-700"><span class="font-semibold">Name:</span> @Model.Employee.FirstName @Model.Employee.LastName</p>
+                </div>
+                <div>
+                    <p class="text-gray-700"><span class="font-semibold">TCKN:</span> @Model.Employee.Tckn</p>
+                </div>
+                <div>
+                    <p class="text-gray-700"><span class="font-semibold">Date of Birth:</span> @Model.Employee.DateOfBirth.ToString("dd/MM/yyyy")</p>
+                </div>
+                <div>
+                    <p class="text-gray-700"><span class="font-semibold">Created At:</span> @Model.Employee.CreatedAt.ToString("dd/MM/yyyy")</p>
+                </div>
+            </div>
+
+            <h2 class="text-xl font-semibold mt-6 mb-4">Contact Details</h2>
+            <div class="grid grid-cols-2 gap-4">
+                @foreach (var phone in Model.Employee.PhoneNumbers)
+                {
+                    <p class="text-gray-700"><span class="font-semibold">Phone:</span> @phone.PhoneNumber</p>
+                }
+                @foreach (var email in Model.Employee.Emails)
+                {
+                    <p class="text-gray-700"><span class="font-semibold">Email:</span> @email.Email</p>
+                }
+            </div>
+
+            <h2 class="text-xl font-semibold mt-6 mb-4">Addresses</h2>
+            <div class="space-y-4">
+                @foreach (var address in Model.Employee.Addresses)
+                {
+                    <div class="border border-gray-200 p-4 rounded-lg">
+                        <p class="text-gray-700"><span class="font-semibold">Address Line 1:</span> @address.AddressLine1</p>
+                        @if (!string.IsNullOrWhiteSpace(address.AddressLine2))
+                        {
+                            <p class="text-gray-700"><span class="font-semibold">Address Line 2:</span> @address.AddressLine2</p>
+                        }
+                        <p class="text-gray-700"><span class="font-semibold">City:</span> @address.City.Name</p>
+                        <p class="text-gray-700"><span class="font-semibold">Postal Code:</span> @address.PostalCode</p>
+                    </div>
+                }
+            </div>
+
+            <h2 class="text-xl font-semibold mt-6 mb-4">Education</h2>
+            <div class="space-y-4">
+                @foreach (var education in Model.Employee.Educations)
+                {
+                    <div class="border border-gray-200 p-4 rounded-lg">
+                        <p class="text-gray-700"><span class="font-semibold">School Name:</span> @education.SchoolName</p>
+                        <p class="text-gray-700"><span class="font-semibold">Degree:</span> @education.Degree</p>
+                        <p class="text-gray-700"><span class="font-semibold">Start Date:</span> @education.StartDate?.ToString("dd/MM/yyyy")</p>
+                        <p class="text-gray-700"><span class="font-semibold">End Date:</span> @education.EndDate?.ToString("dd/MM/yyyy")</p>
+                    </div>
+                }
+            </div>
+
+            <h2 class="text-xl font-semibold mt-6 mb-4">Documents</h2>
+            <div class="space-y-4">
+                @foreach (var document in Model.Employee.Documents)
+                {
+                    <div class="border border-gray-200 p-4 rounded-lg">
+                        <p class="text-gray-700"><span class="font-semibold">Document Type:</span> @document.DocumentType.Name</p>
+                        <p class="text-gray-700"><span class="font-semibold">Uploaded At:</span> @document.UploadedAt.ToString("dd/MM/yyyy")</p>
+                        <p class="text-gray-700"><span class="font-semibold">File Path:</span> @document.FilePath</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

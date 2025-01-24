@@ -48,6 +48,7 @@ namespace hris.Pages.Employees.Create
             PhoneNumberTypeService phoneNumberTypeService,
             DepartmentService departmentService,
             PositionService positionService,
+
             IMapper mapper,
             IMediator mediator
             )
@@ -80,12 +81,6 @@ namespace hris.Pages.Employees.Create
             if (DepartmentId.HasValue)
             {
                 Positions = await _positionService.GetAllByDepartmentIdAsync(DepartmentId.Value);
-
-                foreach (var position in Positions)
-                {
-                    Console.WriteLine(position.Name);
-
-                }
 
             }
             else
@@ -121,16 +116,16 @@ namespace hris.Pages.Employees.Create
                 var employee = await _mediator.Send(command);
 
                 SuccessMessage = "Employee created successfully!";
+                await Init();
 
             }
             catch (Exception ex) 
             {
 
-                ErrorMessage = ex.Message;   
-                
+                ErrorMessage = ex.Message;
+                return StatusCode(500);
             }
-
-            await Init();
+;
             return Page();
         }
 
