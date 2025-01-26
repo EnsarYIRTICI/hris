@@ -20,11 +20,14 @@ namespace hris.Staff.Application.Dto
         public string Password { get; set; }
 
         [Required]
+        public int DepartmentId { get; set; }
+
+        [Required]
         public int PositionId { get; set; }
 
-        public List<EmailDto> Emails { get; set; } = new List<EmailDto>();
+        public List<EmailDto> Emails { get; set; } = new List<EmailDto> { new EmailDto() };
 
-        public List<PhoneDto> PhoneNumbers { get; set; } = new List<PhoneDto>();
+        public List<PhoneDto> PhoneNumbers { get; set; } = new List<PhoneDto> { new PhoneDto() };
     }
 
 

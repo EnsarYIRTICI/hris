@@ -12,6 +12,7 @@ using MediatR;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace hris.Pages.Employees.Create
 {
@@ -19,10 +20,6 @@ namespace hris.Pages.Employees.Create
     {
         [BindProperty]
         public CreateEmployeeDto CreateEmployee { get; set; }
-
-        [BindProperty(SupportsGet = true)]
-        public int? DepartmentId { get; set; }
-
 
         public string SuccessMessage { get; set; }
         public string ErrorMessage { get; set; } 
@@ -66,6 +63,7 @@ namespace hris.Pages.Employees.Create
 
         public async Task Init(bool clear = true)
         {
+
             AddBreadcrumb("Employees", "/employees");
             AddBreadcrumb("Create Employee");
 
@@ -75,18 +73,37 @@ namespace hris.Pages.Employees.Create
             }
 
             EmailTypes = await _emailTypeService.GetAllAsync();
-            Departments = await _departmentService.GetAllAsync();
             PhoneNumberTypes = await _phoneNumberTypeService.GetAllAsync();
 
-            if (DepartmentId.HasValue)
+
+            ViewData["EmailTypeSelectList"] = EmailTypes
+              .Select(et => new SelectListItem
+              {
+                  Value = et.Id.ToString(),
+                  Text = et.Name
+              })
+              .ToList();
+
+            ViewData["PhoneNumberTypeSelectList"] = PhoneNumberTypes
+                .Select(pt => new SelectListItem
+                {
+                    Value = pt.Id.ToString(),
+                    Text = pt.Name
+                })
+                .ToList();
+
+            Departments = await _departmentService.GetAllAsync();
+
+            if(CreateEmployee.DepartmentId != 0)
             {
-                Positions = await _positionService.GetAllByDepartmentIdAsync(DepartmentId.Value);
+                Positions = await _positionService.GetAllByDepartmentIdAsync(CreateEmployee.DepartmentId);
+
+            } else
+            {
+                Positions = new List<Position> { };
 
             }
-            else
-            {
-                Positions = new List<Position>();
-            }
+
         }
 
         public async Task OnGet()
@@ -97,38 +114,91 @@ namespace hris.Pages.Employees.Create
             }
             catch (Exception ex)
             {
-                ErrorMessage = ex.Message;
+                Console.WriteLine(ex);
+                Redirect("/employees");
             }
-          
+           
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostCreate()
         {
-            try {
-
+            try
+            {
                 if (!ModelState.IsValid)
                 {
                     await Init(false);
                     return Page();
                 }
 
-                var command = _mapper.Map<CreateEmployeeCommand>(CreateEmployee);
-                var employee = await _mediator.Send(command);
+                try {
+                    var command = _mapper.Map<CreateEmployeeCommand>(CreateEmployee);
+                    var employee = await _mediator.Send(command);
 
-                SuccessMessage = "Employee created successfully!";
+                    SuccessMessage = "Employee created successfully!";
+
+                } catch (Exception ex) {
+
+                    ErrorMessage = ex.Message;       
+
+                }
+
                 await Init();
+                return Page();
 
             }
             catch (Exception ex) 
             {
-
-                ErrorMessage = ex.Message;
-                return StatusCode(500);
+                Console.WriteLine(ex);
             }
-;
-            return Page();
+
+            return Redirect("/employees");
+
         }
 
+        public async Task<IActionResult> OnPostAddEmail()
+        {
+
+            try
+            {
+                ModelState.Clear();
+
+                CreateEmployee.Emails.Add(new EmailDto());
+
+                await Init(false);
+                return Page();
+            } catch (Exception ex) {
+
+                Console.WriteLine(ex);
+            }
+
+            return Redirect("/employees");
+
+        }
+      
+
+        public async Task<IActionResult> OnPostAddPhone()
+        {
+
+            try
+            {
+                ModelState.Clear();
+
+                CreateEmployee.PhoneNumbers.Add(new PhoneDto());
+
+                await Init(false);
+                return Page();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+
+            return Redirect("/employees");
+        }
+
+
+
     }
+
 
 }

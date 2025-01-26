@@ -3,7 +3,7 @@
 @{
 }
 
-<section class="overflow-auto h-full p-5">
+<section class="overflow-auto flex-1 h-full p-5">
 
     <nav class="flex items-center text-gray-500 space-x-2 my-6">
         @foreach (var breadcrumb in Model.Breadcrumbs)
@@ -20,7 +20,7 @@
         }
     </nav>
 
-    <div class="p-6 m-8 bg-white rounded-xl shadow-md space-y-4">
+    <div class="p-6 mx-auto md:mx-8 md:my-8 bg-white rounded-xl shadow-md space-y-4 w-[27rem]">
         <h1 class="text-2xl font-bold text-gray-700">Create Employee</h1>
 
         <!-- Error Message -->
@@ -54,12 +54,11 @@
             </div>
         }
 
-        <form method="post" class="flex flex-wrap">
+        <form method="post" class="space-y-4">
 
             <!-- Fullname -->
 
-
-            <section class="w-full md:w-[15rem] space-y-4 md:mr-10 mb-8">
+            <section class="w-full space-y-4">
                 <div>
                     <label for="firstName" class="block text-sm font-medium text-gray-700">First Name</label>
                     <input type="text"
@@ -117,74 +116,26 @@
                            class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
                 </div>
 
-
-
-
             </section>
 
-            <section class="w-full md:w-[20rem] space-y-4 flex flex-col md:mr-10 mb-8">
 
-                <!-- Email -->
+            <!-- Email and Phone Form -->
 
-                <div id="email-fields" class="space-y-4">
-                    @if (Model.CreateEmployee.Emails != null && Model.CreateEmployee.Emails.Any())
-                    {
-                        foreach (var email in Model.CreateEmployee.Emails.Select((e, index) => new { e, index }))
-                        {
-                            <div class="email-item flex items-center space-x-4">
-                                <div class="w-2/3">
-                                    <label class="block text-sm font-medium text-gray-700">Email</label>
-                                    <input type="email"
-                                           name="Emails[@email.index].Email"
-                                           value="@email.e.Email"
-                                           required maxlength="200"
-                                           class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
-                                </div>
-                                <div class="w-1/3">
-                                    <label class="block text-sm font-medium text-gray-700">Type</label>
-                                    <select name="Emails[@email.index].EmailTypeId"
-                                            required
-                                            class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white">
-                                        <option value="">Select</option>
-                                        @foreach (var type in Model.EmailTypes)
-                                        {
-                                            <option value="@type.Id")>@type.Name</option>
-                                        }
-                                    </select>
-                                </div>
-                            </div>
-                        }
-                    }
-                    else
-                    {
-                        <div class="email-item flex items-center space-x-4">
-                            <div class="w-2/3">
-                                <label class="block text-sm font-medium text-gray-700">Email</label>
-                                <input type="email"
-                                       name="Emails[0].Email"
-                                       required maxlength="200"
-                                       class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
-                            </div>
-                            <div class="w-1/3">
-                                <label class="block text-sm font-medium text-gray-700">Type</label>
-                                <select name="Emails[0].EmailTypeId"
-                                        required
-                                        class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white">
-                                    <option value="">Select</option>
-                                    @foreach (var type in Model.EmailTypes)
-                                    {
-                                        <option value="@type.Id">@type.Name</option>
-                                    }
-                                </select>
-                            </div>
-                        </div>
-                    }
-
-                </div>
+            <section class="w-full space-y-4">
 
 
-                <button type="button" id="add-email"
+                @for (int i = 0; i < Model.CreateEmployee.Emails.Count; i++)
+                {
+                    @Html.Partial("_EmailField", Tuple.Create(
+                             i,
+                             ViewData["EmailTypeSelectList"] as IEnumerable<SelectListItem>,
+                             Model.CreateEmployee.Emails[i].Email
+                             ))
+                }
+
+                <button type="submit" formnovalidate asp-page-handler="AddEmail"
                         class="items-center flex text-blue-500 hover:text-blue-300 text-sm cursor-pointer transition-all">
+
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
                          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                          class="lucide lucide-circle-plus text-blue-500">
@@ -192,75 +143,23 @@
                         <path d="M8 12h8" />
                         <path d="M12 8v8" />
                     </svg>
+
                     <span class="ml-1">Add Another Email</span>
                 </button>
 
-                <!-- PhoneNumber -->
 
-                <div id="phone-fields" class="space-y-4">
-                    @if (Model.CreateEmployee.PhoneNumbers != null && Model.CreateEmployee.PhoneNumbers.Any())
-                    {
-                        foreach (var phone in Model.CreateEmployee.PhoneNumbers.Select((p, index) => new { p, index }))
-                        {
-                            <div class="phone-item flex items-center space-x-4">
-                                <div class="w-2/3">
-                                    <label class="block text-sm font-medium text-gray-700">Phone Number</label>
-                                    <input type="text"
-                                           name="PhoneNumbers[@phone.index].PhoneNumber"
-                                           value="@phone.p.PhoneNumber"
-                                           required
-                                           maxlength="10"
-                                           pattern="\d{1,10}"
-                                           title="Only numbers are allowed, and the length should be a maximum of 10 digits."
-                                           class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
-                                </div>
-                                <div class="w-1/3">
-                                    <label class="block text-sm font-medium text-gray-700">Type</label>
-                                    <select name="PhoneNumbers[@phone.index].PhoneTypeId"
-                                            required
-                                            class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white">
-                                        <option value="">Select</option>
-                                        @foreach (var type in Model.PhoneNumberTypes)
-                                        {
-                                            <option value="@type.Id">@type.Name</option>
-                                        }
-                                    </select>
-                                </div>
-                            </div>
-                        }
-                    }
-                    else
-                    {
-                        <div class="phone-item flex items-center space-x-4">
-                            <div class="w-2/3">
-                                <label class="block text-sm font-medium text-gray-700">Phone Number</label>
-                                <input type="text"
-                                       name="PhoneNumbers[0].PhoneNumber"
-                                       required
-                                       maxlength="10"
-                                       pattern="\d{1,10}"
-                                       title="Only numbers are allowed, and the length should be a maximum of 10 digits."
-                                       class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
-                            </div>
-                            <div class="w-1/3">
-                                <label class="block text-sm font-medium text-gray-700">Type</label>
-                                <select name="PhoneNumbers[0].PhoneTypeId"
-                                        required
-                                        class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white">
-                                    <option value="">Select</option>
-                                    @foreach (var type in Model.PhoneNumberTypes)
-                                    {
-                                        <option value="@type.Id">@type.Name</option>
-                                    }
-                                </select>
-                            </div>
-                        </div>
-                    }
-                </div>
+                @for (int i = 0; i < Model.CreateEmployee.PhoneNumbers.Count; i++)
+                {
+                    @Html.Partial("_PhoneField", Tuple.Create(
+                             i,
+                             ViewData["PhoneNumberTypeSelectList"] as IEnumerable<SelectListItem>,
+                             Model.CreateEmployee.PhoneNumbers[i].PhoneNumber
+                             ))
+                }
 
-
-                <button type="button" id="add-phone"
+                <button type="submit" formnovalidate asp-page-handler="AddPhone"
                         class="items-center flex text-blue-500 hover:text-blue-300 text-sm cursor-pointer transition-all">
+
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
                          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                          class="lucide lucide-circle-plus text-blue-500">
@@ -268,16 +167,17 @@
                         <path d="M8 12h8" />
                         <path d="M12 8v8" />
                     </svg>
+
                     <span class="ml-1">Add Another Phone</span>
                 </button>
+
             </section>
 
 
 
-            <section class="w-full md:w-[15rem] space-y-4 flex flex-col">
+            <!-- Department Form -->
 
-
-
+            <section class="w-full space-y-4">
                 <div>
                     <label for="department" class="block text-sm font-medium text-gray-700">Department</label>
                     <select id="department"
@@ -309,21 +209,21 @@
                 <div class="flex-1"></div>
 
                 <div class="pt-4">
-                    <button type="submit"
+                    <button type="submit" asp-page-handler="Create"
                             class="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">
                         Submit
                     </button>
                 </div>
 
-            </section>           
+            </section>       
+            
+
         </form>
 
     </div>
 
 
-
     <script>
-
 
         // TCKN
 
@@ -339,91 +239,9 @@
         {
             <text>
                     const emailTypes = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.EmailTypes));
-            const phoneNumberTypes = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.PhoneNumberTypes));
+                    const phoneNumberTypes = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.PhoneNumberTypes));
             </text>
         }
-
-        // Select Department
-
-        document.getElementById('department').addEventListener('input', function () {
-            const searchTerm = this.value;
-
-            fetch(`/employees/create/index?DepartmentId=${encodeURIComponent(searchTerm)}`, {
-                method: 'GET',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-                .then(response => response.text())
-                .then(html => {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-
-                    const positionElement = doc.getElementById('position');
-                    document.getElementById('position').innerHTML = positionElement.innerHTML;
-                })
-                .catch(error => console.error('Error fetching search results:', error));
-        });
-
-
-        // Add Email
-
-        document.getElementById('add-email').addEventListener('click', function () {
-            const emailFields = document.getElementById('email-fields');
-            const index = emailFields.querySelectorAll('.email-item').length; // Sadece email-item sınıfını say
-            const emailField = `
-                <div class="email-item flex items-center space-x-4">
-                    <div class="w-2/3">
-                        <label class="block text-sm font-medium text-gray-700">Email</label>
-                        <input type="email"
-                               name="Emails[${index}].Email"
-                               required maxlength="200"
-                               class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
-                    </div>
-                    <div class="w-1/3">
-                        <label class="block text-sm font-medium text-gray-700">Type</label>
-                        <select name="Emails[${index}].EmailTypeId"
-                                required
-                                class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white">
-                            <option value="">Select</option>
-                            ${emailTypes.map(type => `<option value="${type.Id}">${type.Name}</option>`).join('')}
-                        </select>
-                    </div>
-                </div>`;
-            emailFields.insertAdjacentHTML('beforeend', emailField);
-        });
-
-
-        // Add Phone
-
-        document.getElementById('add-phone').addEventListener('click', function () {
-            const phoneFields = document.getElementById('phone-fields');
-            const index = phoneFields.querySelectorAll('.phone-item').length; // Sadece phone-item sınıfını say
-            const phoneField = `
-                <div class="phone-item flex items-center space-x-4">
-                    <div class="w-2/3">
-                        <label class="block text-sm font-medium text-gray-700">Phone Number</label>
-                        <input type="text"
-                               name="PhoneNumbers[${index}].PhoneNumber"
-                               required
-                               maxlength="10"
-                               pattern="\\d{1,10}"
-                               title="Only numbers are allowed, and the length should be a maximum of 10 digits."
-                               class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
-                    </div>
-                    <div class="w-1/3">
-                        <label class="block text-sm font-medium text-gray-700">Type</label>
-                        <select name="PhoneNumbers[${index}].PhoneTypeId"
-                                required
-                                class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white">
-                            <option value="">Select</option>
-                            ${phoneNumberTypes.map(type => `<option value="${type.Id}">${type.Name}</option>`).join('')}
-                        </select>
-                    </div>
-                </div>`;
-            phoneFields.insertAdjacentHTML('beforeend', phoneField);
-        });
-
 
 
     </script>
