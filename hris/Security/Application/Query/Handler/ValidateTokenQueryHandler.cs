@@ -1,22 +1,25 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using MediatR;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace hris.Security.Application.Command
+namespace hris.Security.Application.Query.Handler
 {
-    public class TokenValidator
+
+    public class ValidateTokenQueryHandler : IRequestHandler<ValidateTokenQuery, ClaimsPrincipal?>
     {
         private readonly string _secretKey;
 
-        public TokenValidator(IConfiguration configuration)
+        public ValidateTokenQueryHandler(IConfiguration configuration)
         {
             _secretKey = configuration["JWT_SECRET"]
                           ?? throw new ArgumentNullException("JWT_SECRET configuration is missing.");
         }
 
-        public ClaimsPrincipal? Validate(string token, out SecurityToken? validatedToken)
+        public async Task<ClaimsPrincipal?> Handle(ValidateTokenQuery request, CancellationToken cancellationToken)
         {
+            var token = request.Token;
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_secretKey);
 
@@ -31,15 +34,13 @@ namespace hris.Security.Application.Command
 
             try
             {
-                var principal = tokenHandler.ValidateToken(token, validationParameters, out validatedToken);
+                var principal = tokenHandler.ValidateToken(token, validationParameters, out var validatedToken);
                 return principal;
             }
             catch
             {
-                validatedToken = null;
                 return null;
             }
         }
     }
-
 }

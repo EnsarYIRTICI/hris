@@ -14,26 +14,15 @@ namespace hris.Staff.Application.Service
     {
         private readonly AppDbContext _context;
         private readonly EmployeeEmailService _employeeEmailService;
-        private readonly EmployeePasswordService _employeePasswordService;
-        private readonly EmailTypeService _emailTypeService;
-        private readonly PhoneNumberTypeService _phoneNumberTypeService;
-        private readonly PositionService _positionService;
+
 
         public EmployeeService(
             AppDbContext context,
-            EmployeeEmailService employeeEmailService,
-            EmployeePasswordService employeePasswordService,
-            EmailTypeService emailTypeService,
-            PositionService positionService,
-            PhoneNumberTypeService phoneNumberTypeService
+            EmployeeEmailService employeeEmailService
             )
         {
             _context = context;
             _employeeEmailService = employeeEmailService;
-            _employeePasswordService = employeePasswordService;
-            _emailTypeService = emailTypeService;
-            _positionService = positionService;
-            _phoneNumberTypeService = phoneNumberTypeService;
         }
 
         public async Task<int> GetTotalCountAsync()

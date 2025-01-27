@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace hris.Staff.Application.Dto
 {
-    public class CreateEmployeeDto : IRequest<Employee>
+    public class CreateEmployeeDto 
     {
         [Required, MaxLength(100)]
         public string FirstName { get; set; }
@@ -24,15 +24,18 @@ namespace hris.Staff.Application.Dto
         [Required]
         public int PositionId { get; set; }
 
+        [Required]
         public List<EmailDto> Emails { get; set; } = new List<EmailDto> { new EmailDto() };
 
+        [Required]
         public List<PhoneDto> PhoneNumbers { get; set; } = new List<PhoneDto> { new PhoneDto() };
 
         public int DepartmentId { get; set; }
         public bool AddEmail { get; set; } = false;
         public bool AddPhone { get; set; } = false;
-    }
 
+
+    }
 
     public class EmailDto
     {
@@ -54,7 +57,7 @@ namespace hris.Staff.Application.Dto
         public int PhoneTypeId { get; set; }
 
         [Required]
-        public int CountryId { get; set; }
+        public int CountryId { get; set; } = 1;
     }
 
 }

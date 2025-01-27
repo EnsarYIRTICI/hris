@@ -5,6 +5,7 @@ using hris.Staff.Domain.Entities;
 using hris.Staff.Application.Service;
 using hris.Database;
 using hris.Staff.Domain.Exceptions;
+using hris.Security.Application.Service;
 
 namespace hris.Pages
 {
@@ -76,7 +77,7 @@ namespace hris.Pages
                 var employee = await _employeeService.GetByIdAsync(employeeEmail.EmployeeId);
 
                 // Token oluştur
-                var token = _tokenService.GenerateToken(employee);
+                var token = await _tokenService.GenerateToken(employee);
 
                 Console.WriteLine("TOKEN --> ", token);
 

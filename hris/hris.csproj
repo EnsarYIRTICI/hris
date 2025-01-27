@@ -31,7 +31,6 @@
   <ItemGroup>
     <Folder Include="Paper\Application\Service\" />
     <Folder Include="Paper\Domain\Entities\" />
-    <Folder Include="Staff\Application\Command\" />
   </ItemGroup>
 
 </Project>

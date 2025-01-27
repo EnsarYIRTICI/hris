@@ -9,6 +9,7 @@ using System.Reflection;
 using MediatR;
 using AutoMapper;
 using hris.Division.Application.Service;
+using hris.Security.Application.Service;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,22 +17,20 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddScoped<EmployeeValidator>();
-builder.Services.AddScoped<TokenGenerator>();
-builder.Services.AddScoped<TokenValidator>();
-builder.Services.AddScoped<EmployeeTokenService>();
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Warning);
 
-builder.Services.AddScoped<SeedService>();
+builder.Services.AddScoped<EmployeeTokenService>();
 
 builder.Services.AddScoped<EmployeeService>();
 builder.Services.AddScoped<EmployeeEmailService>();
 builder.Services.AddScoped<EmployeePasswordService>();
 
-builder.Services.AddScoped<CountryService>();
-builder.Services.AddScoped<EmailTypeService>();
-builder.Services.AddScoped<PhoneNumberTypeService>();
 builder.Services.AddScoped<DepartmentService>();
 builder.Services.AddScoped<PositionService>();
+
+builder.Services.AddScoped<SeedService>();
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());

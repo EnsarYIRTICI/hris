@@ -1,39 +1,42 @@
-﻿using hris.Security.Application.Dto;
+﻿using MediatR;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace hris.Security.Application.Command
+namespace hris.Security.Application.Command.Handler
 {
-    public class TokenGenerator
+    public class GenerateTokenCommandHandler : IRequestHandler<GenerateTokenCommand, string>
     {
         private readonly string _secretKey;
         private readonly int _tokenLifetimeInDays;
 
-        public TokenGenerator(IConfiguration configuration)
+        public GenerateTokenCommandHandler(IConfiguration configuration)
         {
             _secretKey = configuration["JWT_SECRET"]
-                        ?? throw new ArgumentNullException("JWT_SECRET configuration is missing.");
+                         ?? throw new ArgumentNullException("JWT_SECRET configuration is missing.");
 
             _tokenLifetimeInDays = int.Parse(configuration["TokenLifetimeInDays"] ?? "1");
         }
 
-
-        public string Generate(EmployeeTokenClaim tokenData)
+        public async Task<string> Handle(GenerateTokenCommand request, CancellationToken cancellationToken)
         {
-            if (tokenData == null)
-                throw new ArgumentNullException(nameof(tokenData));
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_secretKey);
 
-            var claims = new[]
-            {
-            new Claim("EmployeeId", tokenData.EmployeeId),
-            new Claim("LastPasswordChange", tokenData.LastPasswordChange?.ToString() ?? string.Empty)
+            // Claim'leri oluştur
+            var claims = new List<Claim>
+        {
+            new Claim("EmployeeId", request.EmployeeId),
+            new Claim("LastPasswordChange", request.LastPasswordChange?.ToString() ?? string.Empty)
         };
 
+            // Token descriptor oluştur
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
@@ -45,7 +48,4 @@ namespace hris.Security.Application.Command
             return tokenHandler.WriteToken(token);
         }
     }
-
-
-
 }

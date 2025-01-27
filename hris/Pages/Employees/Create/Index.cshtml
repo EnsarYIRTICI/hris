@@ -213,8 +213,8 @@
 
             <!-- Hidden States -->
 
-            <input type="hidden" name="AddEmail" asp-for=CreateEmployee.AddEmail value=@Model.CreateEmployee.AddEmail id="AddEmail">
-            <input type="hidden" name="AddPhone" asp-for=CreateEmployee.AddPhone value=@Model.CreateEmployee.AddPhone id="AddPhone">
+            <input id="AddEmail" type="hidden" name="AddEmail" asp-for=CreateEmployee.AddEmail value=@Model.CreateEmployee.AddEmail>
+            <input id="AddPhone" type="hidden" name="AddPhone" asp-for=CreateEmployee.AddPhone value=@Model.CreateEmployee.AddPhone>
         </form>
 
     </div>
@@ -234,21 +234,19 @@
     // Add Depatment Input Change
 
     function OnDepartmentChange() {
-        Refresh()
+        Refresh();
     }
 
     // Add Phone and Email Fields
 
     function AddEmail() {
         document.getElementById('AddEmail').value = "true";
-        document.getElementById("main-form").action = "/employees/create";
-        document.getElementById("main-form").submit();
+        Refresh();
     }
 
     function AddPhone() {
         document.getElementById('AddPhone').value = "true";
-        document.getElementById("main-form").action = "/employees/create";
-        document.getElementById("main-form").submit();
+        Refresh();
     }
 
 

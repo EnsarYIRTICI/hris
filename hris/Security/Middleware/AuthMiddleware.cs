@@ -1,4 +1,6 @@
-﻿namespace hris.Security.Middleware
+﻿using hris.Security.Application.Service;
+
+namespace hris.Security.Middleware
 {
     public class AuthMiddleware
     {

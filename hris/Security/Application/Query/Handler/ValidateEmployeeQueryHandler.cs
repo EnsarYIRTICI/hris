@@ -1,23 +1,21 @@
 ﻿using hris.Staff.Application.Dto;
 using hris.Staff.Application.Service;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+using MediatR;
 
-namespace hris.Security.Application.Command
+namespace hris.Security.Application.Query.Handler
 {
-    public class EmployeeValidator
+    public class ValidateEmployeeQueryHandler : IRequestHandler<ValidateEmployeeQuery, (bool IsValid, string? ErrorMessage, EmployeeSummary? Employee)>
     {
         private readonly EmployeeService _employeeService;
 
-        public EmployeeValidator(EmployeeService employeeService)
+        public ValidateEmployeeQueryHandler(EmployeeService employeeService)
         {
             _employeeService = employeeService;
         }
 
-        public async Task<(bool IsValid, string? ErrorMessage, EmployeeSummary? Employee)> ValidateAsync(ClaimsPrincipal principal)
+        public async Task<(bool IsValid, string? ErrorMessage, EmployeeSummary? Employee)> Handle(ValidateEmployeeQuery request, CancellationToken cancellationToken)
         {
-
+            var principal = request.Principal;
             var employeeIdClaim = principal.FindFirst("EmployeeId")?.Value;
             if (string.IsNullOrEmpty(employeeIdClaim) || !int.TryParse(employeeIdClaim, out int employeeId))
             {
@@ -50,5 +48,4 @@ namespace hris.Security.Application.Command
             return (true, null, employee);
         }
     }
-
 }

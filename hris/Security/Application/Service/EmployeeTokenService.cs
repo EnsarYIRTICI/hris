@@ -1,56 +1,49 @@
-﻿using hris.Security.Application.Command;
+﻿
+using hris.Security.Application.Command;
 using hris.Security.Application.Dto;
+using hris.Security.Application.Query;
 using hris.Staff.Domain.Entities;
-using Microsoft.IdentityModel.Tokens;
+using MediatR;
 
-
-public class EmployeeTokenService
+namespace hris.Security.Application.Service
 {
-    private readonly TokenValidator _tokenValidator;
-    private readonly EmployeeValidator _employeeValidationService;
-    private readonly TokenGenerator _tokenGenerator;
-
-    public EmployeeTokenService(
-        TokenValidator tokenValidator,
-        EmployeeValidator employeeValidationService,
-        TokenGenerator tokenGenerator)
+    public class EmployeeTokenService
     {
-        _tokenValidator = tokenValidator;
-        _employeeValidationService = employeeValidationService;
-        _tokenGenerator = tokenGenerator;
-    }
+        private readonly IMediator _mediator;
 
-
-    public async Task<EmployeeTokenValidationResult> ValidateToken(string token)
-    {
-        var result = new EmployeeTokenValidationResult();
-
-        var principal = _tokenValidator.Validate(token, out var validatedToken);
-
-        if (principal == null)
+        public EmployeeTokenService(IMediator mediator)
         {
-            result.ErrorMessage = "Token is invalid.";
-            result.IsValid = false;
+            _mediator = mediator;
+        }
+
+        public async Task<EmployeeTokenValidationResult> ValidateToken(string token)
+        {
+            var result = new EmployeeTokenValidationResult();
+
+            var principal = await _mediator.Send(new ValidateTokenQuery(token));
+
+            if (principal == null)
+            {
+                result.ErrorMessage = "Token geçersiz.";
+                result.IsValid = false;
+                return result;
+            }
+
+            var (isValid, errorMessage, employee) = await _mediator.Send(new ValidateEmployeeQuery(principal));
+
+            result.IsValid = isValid;
+            result.ErrorMessage = errorMessage;
+            result.Employee = employee;
+
             return result;
         }
 
-        var (isValid, errorMessage, employee) = await _employeeValidationService.ValidateAsync(principal);
-
-        result.IsValid = isValid;
-        result.ErrorMessage = errorMessage;
-        result.Employee = employee;
-
-        return result;
-    }
-
-    public string GenerateToken(Employee employee)
-    {
-        var tokenData = new EmployeeTokenClaim
+        public async Task<string> GenerateToken(Employee employee)
         {
-            EmployeeId = employee.Id.ToString(),
-            LastPasswordChange = employee.LastPasswordChange
-        };
-
-        return _tokenGenerator.Generate(tokenData);
+            return await _mediator.Send(new GenerateTokenCommand(
+                employee.Id.ToString(),
+                employee.LastPasswordChange
+            ));
+        }
     }
 }

@@ -17,7 +17,6 @@ namespace hris.Seed.Application.Service
         }
 
 
-
         public async Task<PhoneNumberType?> GetByNameOrThrowAsync(string name)
         {
             return await _context.PhoneNumberTypes.FirstOrDefaultAsync(p => p.Name == name);
