@@ -16,11 +16,9 @@ namespace hris.Staff.Domain.Entities
         public int DocumentTypeId { get; set; }
 
         [MaxLength(500)]
-        public string FilePath { get; set; } // HDFS'deki dosya yolu
+        public string FilePath { get; set; } 
 
         public DateTime UploadedAt { get; set; }
-
-        public string Metadata { get; set; } // JSON formatında ek bilgiler
 
         [ForeignKey("EmployeeId")]
         public Employee Employee { get; set; }

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using hris.DepartmentModule.Domain.Entities;
+using hris.Division.Domain.Entities;
 using hris.Staff.Domain.Entities;
 
 

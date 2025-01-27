@@ -18,40 +18,16 @@ namespace hris.Seed.Application.Service
 
 
 
-        public async Task<PhoneNumberType> GetMobileAsync()
+        public async Task<PhoneNumberType?> GetByNameOrThrowAsync(string name)
         {
-            return await GetByNameOrThrowAsync("Mobile");
-        }
+            return await _context.PhoneNumberTypes.FirstOrDefaultAsync(p => p.Name == name);
 
-        public async Task<PhoneNumberType> GetWorkAsync()
-        {
-            return await GetByNameOrThrowAsync("Work");
-        }
-
-        public async Task<PhoneNumberType> GetHomeAsync()
-        {
-            return await GetByNameOrThrowAsync("Home");
-        }
-
-        public async Task<PhoneNumberType> GetByNameOrThrowAsync(string name)
-        {
-            var phoneNumberType = await _context.PhoneNumberTypes.FirstOrDefaultAsync(p => p.Name == name);
-            if (phoneNumberType == null)
-            {
-                throw new PhoneNumberTypeNotFoundException($"PhoneNumberType with name '{name}' not found.");
-            }
-            return phoneNumberType;
         }
 
 
-        public async Task<PhoneNumberType> GetByIdOrThrowAsync(int id)
+        public async Task<PhoneNumberType?> GetByIdOrThrowAsync(int id)
         {
-            var phoneNumberType = await _context.PhoneNumberTypes.FirstOrDefaultAsync(p => p.Id == id);
-            if (phoneNumberType == null)
-            {
-                throw new PhoneNumberTypeNotFoundException($"PhoneNumberType with id '{id}' not found.");
-            }
-            return phoneNumberType;
+            return await _context.PhoneNumberTypes.FirstOrDefaultAsync(p => p.Id == id);
         }
 
 

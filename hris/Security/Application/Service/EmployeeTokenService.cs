@@ -6,16 +6,16 @@ using Microsoft.IdentityModel.Tokens;
 
 public class EmployeeTokenService
 {
-    private readonly TokenValidator _tokenValidationService;
+    private readonly TokenValidator _tokenValidator;
     private readonly EmployeeValidator _employeeValidationService;
     private readonly TokenGenerator _tokenGenerator;
 
     public EmployeeTokenService(
-        TokenValidator tokenValidationService,
+        TokenValidator tokenValidator,
         EmployeeValidator employeeValidationService,
         TokenGenerator tokenGenerator)
     {
-        _tokenValidationService = tokenValidationService;
+        _tokenValidator = tokenValidator;
         _employeeValidationService = employeeValidationService;
         _tokenGenerator = tokenGenerator;
     }
@@ -25,7 +25,7 @@ public class EmployeeTokenService
     {
         var result = new EmployeeTokenValidationResult();
 
-        var principal = _tokenValidationService.Validate(token, out var validatedToken);
+        var principal = _tokenValidator.Validate(token, out var validatedToken);
 
         if (principal == null)
         {

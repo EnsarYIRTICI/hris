@@ -7,24 +7,30 @@ namespace hris.Staff.Domain.Entities
     public class EmployeePhoneNumber
     {
         [Key]
-        public int Id { get; set; } // Primary Key
+        public int Id { get; set; } 
 
         [Required]
-        public int EmployeeId { get; set; } // Foreign Key to Employee
+        public int EmployeeId { get; set; } 
 
         [Required, MaxLength(15)]
-        public string PhoneNumber { get; set; } // Telefon numarası
+        public string PhoneNumber { get; set; } 
 
         [Required]
-        public DateTime CreatedAt { get; set; } // Employee Oluşturulma Tarihi
+        public DateTime CreatedAt { get; set; }
 
         [Required]
-        public int PhoneNumberTypeId { get; set; } // Foreign Key to PhoneNumberType
+        public int PhoneNumberTypeId { get; set; }
 
         [ForeignKey("PhoneNumberTypeId")]
-        public PhoneNumberType PhoneNumberType { get; set; } // Telefon Numarası Türü
+        public PhoneNumberType PhoneNumberType { get; set; }
+
+        [Required]
+        public int CountryId { get; set; } 
+
+        [ForeignKey("CountryId")]
+        public Country Country { get; set; }
 
         [ForeignKey("EmployeeId")]
-        public Employee Employee { get; set; } // Çalışan ile ilişki
+        public Employee Employee { get; set; } 
     }
 }

@@ -1,4 +1,4 @@
-﻿@model Tuple<int, IEnumerable<hris.Seed.Domain.Entities.PhoneNumberType>, string, int>
+﻿@model Tuple<int, IEnumerable<hris.Seed.Domain.Entities.PhoneNumberType>, string, int, IEnumerable<hris.Seed.Domain.Entities.Country>, int>
 
 @{
     int index = Model.Item1;
@@ -6,7 +6,20 @@
 
 
 <div class="phone-item flex items-center space-x-4">
-    <div class="w-2/3">
+    <div class="w-1/4">
+        <label class="block text-sm font-medium text-gray-700">Type</label>
+        <select name="PhoneNumbers[@Model.Item1].CountryId"
+                asp-for="@Model.Item6"
+                required
+                class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white">
+            <option value="">Select</option>
+            @foreach (var type in Model.Item5)
+            {
+                <option value="@type.Id">@type.PhoneCode</option>
+            }
+        </select>
+    </div>
+    <div class="w-2/4">
         <label class="block text-sm font-medium text-gray-700">Phone Number</label>
         <input type="text"
                id="phoneField_@index"
@@ -18,7 +31,7 @@
                title="Only numbers are allowed, and the length should be a maximum of 10 digits."
                class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
     </div>
-    <div class="w-1/3">
+    <div class="w-1/4">
         <label class="block text-sm font-medium text-gray-700">Type</label>
         <select name="PhoneNumbers[@Model.Item1].PhoneTypeId"
                 asp-for="@Model.Item4"

@@ -30,14 +30,14 @@ namespace hris.Security.Application.Command
                 return (false, "Employee not found in the database.", null);
             }
 
-            var tokenLastPasswordChangeClaim = principal.FindFirst("LastPasswordChange")?.Value;
-            if (string.IsNullOrEmpty(tokenLastPasswordChangeClaim) || !DateTime.TryParse(tokenLastPasswordChangeClaim, out DateTime tokenLastPasswordChange))
-            {
-                return (false, "Token does not contain a valid LastPasswordChange claim.", null);
-            }
-;
             if (employee.LastPasswordChange.HasValue)
             {
+                var tokenLastPasswordChangeClaim = principal.FindFirst("LastPasswordChange")?.Value;
+                if (string.IsNullOrEmpty(tokenLastPasswordChangeClaim) || !DateTime.TryParse(tokenLastPasswordChangeClaim, out DateTime tokenLastPasswordChange))
+                {
+                    return (false, "Token does not contain a valid LastPasswordChange claim.", null);
+                }
+
                 long employeeLastPasswordChangeUnix = new DateTimeOffset(employee.LastPasswordChange.Value).ToUnixTimeSeconds();
                 long tokenLastPasswordChangeUnix = new DateTimeOffset(tokenLastPasswordChange).ToUnixTimeSeconds();
 

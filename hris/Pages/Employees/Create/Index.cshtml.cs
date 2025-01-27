@@ -1,6 +1,6 @@
 using AutoMapper;
-using hris.DepartmentModule.Application.Service;
-using hris.DepartmentModule.Domain.Entities;
+using hris.Division.Application.Service;
+using hris.Division.Domain.Entities;
 using hris.Pages.PageModels;
 using hris.Seed.Application.Service;
 using hris.Seed.Domain.Entities;
@@ -24,13 +24,15 @@ namespace hris.Pages.Employees.Create
         public string SuccessMessage { get; set; }
         public string ErrorMessage { get; set; } 
 
+
+        public List<Country> Countries { get; set; }
         public List<EmailType> EmailTypes { get; set; }
         public List<PhoneNumberType> PhoneNumberTypes { get; set; }
         public List<Department> Departments { get; set; }
         public List<Position> Positions { get; set; } 
         
 
-        private readonly EmployeeService _employeeService;      
+        private readonly CountryService _countryService;
         private readonly EmailTypeService _emailTypeService;      
         private readonly PhoneNumberTypeService _phoneNumberTypeService;
         private readonly DepartmentService _departmentService;
@@ -40,17 +42,17 @@ namespace hris.Pages.Employees.Create
         private readonly IMediator _mediator;
 
         public IndexModel(
-            EmployeeService employeeService,     
+            CountryService countryService,
             EmailTypeService emailTypeService,
             PhoneNumberTypeService phoneNumberTypeService,
             DepartmentService departmentService,
-            PositionService positionService,
+            PositionService positionService,       
 
             IMapper mapper,
             IMediator mediator
             )
         {
-            _employeeService = employeeService;       
+            _countryService = countryService;
             _emailTypeService = emailTypeService;
             _phoneNumberTypeService = phoneNumberTypeService;
             _departmentService = departmentService;
@@ -72,11 +74,14 @@ namespace hris.Pages.Employees.Create
                 CreateEmployee = new CreateEmployeeDto();
             }
 
+            Countries = await _countryService.GetAllAsync();
+
+            Console.WriteLine("Countries -->" + Countries);
+            
             EmailTypes = await _emailTypeService.GetAllAsync();
             PhoneNumberTypes = await _phoneNumberTypeService.GetAllAsync();
 
             Departments = await _departmentService.GetAllAsync();
-            Positions = new List<Position> { };
 
             if (CreateEmployee.DepartmentId > 0)
             {
@@ -89,16 +94,17 @@ namespace hris.Pages.Employees.Create
 
         }
 
-        public async Task OnGet()
+        public async Task<IActionResult> OnGet()
         {
             try
             {
                 await Init();
+                return Page();
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
-                Redirect("/employees");
+                return Redirect("/employees");
             }
            
         }
@@ -148,8 +154,7 @@ namespace hris.Pages.Employees.Create
 
                 try
                 {
-                    var command = _mapper.Map<CreateEmployeeCommand>(CreateEmployee);
-                    var employee = await _mediator.Send(command);
+                    var employee = await _mediator.Send(CreateEmployee);
 
                     SuccessMessage = "Employee created successfully!";
 

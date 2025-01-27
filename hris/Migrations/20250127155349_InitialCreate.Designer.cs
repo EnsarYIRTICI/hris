@@ -12,8 +12,8 @@ using hris.Database;
 namespace hris.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250122095412_SeedDataMigration")]
-    partial class SeedDataMigration
+    [Migration("20250127155349_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,31 @@ namespace hris.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("hris.Division.Domain.Entities.Department", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Departments");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "IT"
+                        });
+                });
 
             modelBuilder.Entity("hris.Seed.Domain.Entities.Bank", b =>
                 {
@@ -114,6 +139,16 @@ namespace hris.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("PhoneCode")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
+
+                    b.Property<string>("ShortCode")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Countries");
@@ -122,42 +157,23 @@ namespace hris.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "Turkey"
+                            Name = "Turkey",
+                            PhoneCode = "+90",
+                            ShortCode = "TR"
                         },
                         new
                         {
                             Id = 2,
-                            Name = "USA"
+                            Name = "USA",
+                            PhoneCode = "+1",
+                            ShortCode = "US"
                         },
                         new
                         {
                             Id = 3,
-                            Name = "Germany"
-                        });
-                });
-
-            modelBuilder.Entity("hris.Seed.Domain.Entities.Department", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Departments");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "IT"
+                            Name = "Germany",
+                            PhoneCode = "+49",
+                            ShortCode = "DE"
                         });
                 });
 
@@ -584,10 +600,6 @@ namespace hris.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<string>("Metadata")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("UploadedAt")
                         .HasColumnType("datetime2");
 
@@ -770,10 +782,16 @@ namespace hris.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("CountryId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("EmployeeId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Number")
+                    b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasMaxLength(15)
                         .HasColumnType("nvarchar(15)");
@@ -782,6 +800,8 @@ namespace hris.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CountryId");
 
                     b.HasIndex("EmployeeId");
 
@@ -865,7 +885,7 @@ namespace hris.Migrations
 
             modelBuilder.Entity("hris.Seed.Domain.Entities.Position", b =>
                 {
-                    b.HasOne("hris.Seed.Domain.Entities.Department", "Department")
+                    b.HasOne("hris.Division.Domain.Entities.Department", "Department")
                         .WithMany("Positions")
                         .HasForeignKey("DepartmentId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1019,6 +1039,12 @@ namespace hris.Migrations
 
             modelBuilder.Entity("hris.Staff.Domain.Entities.EmployeePhoneNumber", b =>
                 {
+                    b.HasOne("hris.Seed.Domain.Entities.Country", "Country")
+                        .WithMany()
+                        .HasForeignKey("CountryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("hris.Staff.Domain.Entities.Employee", "Employee")
                         .WithMany("PhoneNumbers")
                         .HasForeignKey("EmployeeId")
@@ -1030,6 +1056,8 @@ namespace hris.Migrations
                         .HasForeignKey("PhoneNumberTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Country");
 
                     b.Navigation("Employee");
 
@@ -1074,6 +1102,11 @@ namespace hris.Migrations
                     b.Navigation("RelationshipType");
                 });
 
+            modelBuilder.Entity("hris.Division.Domain.Entities.Department", b =>
+                {
+                    b.Navigation("Positions");
+                });
+
             modelBuilder.Entity("hris.Seed.Domain.Entities.Bank", b =>
                 {
                     b.Navigation("EmployeeBanks");
@@ -1087,11 +1120,6 @@ namespace hris.Migrations
             modelBuilder.Entity("hris.Seed.Domain.Entities.Country", b =>
                 {
                     b.Navigation("Cities");
-                });
-
-            modelBuilder.Entity("hris.Seed.Domain.Entities.Department", b =>
-                {
-                    b.Navigation("Positions");
                 });
 
             modelBuilder.Entity("hris.Seed.Domain.Entities.EmailType", b =>

@@ -2,37 +2,41 @@
 using hris.Database;
 using hris.Seed.Application.Service;
 using hris.Seed.Domain.Entities;
+using hris.Staff.Application.Dto;
 using hris.Staff.Application.Service;
 using hris.Staff.Domain.Entities;
 using MediatR;
 
 namespace hris.Staff.Application.Command
 {
-    public class CreateEmployeeCommandHandler : IRequestHandler<CreateEmployeeCommand, Employee>
+    public class CreateEmployeeCommandHandler : IRequestHandler<CreateEmployeeDto, Employee>
     {
-        private readonly IMapper _mapper;
         private readonly AppDbContext _context;
         private readonly EmployeePasswordService _employeePasswordService;
+
+        private readonly CountryService _countryService;
         private readonly PhoneNumberTypeService _phoneNumberTypeService;
         private readonly EmailTypeService _emailTypeService;
         private readonly PositionService _positionService;
         public CreateEmployeeCommandHandler(
-            IMapper mapper,
             AppDbContext context,
             EmployeePasswordService employeePasswordService,
+
+            CountryService countryService,
             PhoneNumberTypeService phoneNumberTypeService,
             EmailTypeService emailTypeService,
             PositionService positionService)
         {
-            _mapper = mapper;
             _context = context;
             _employeePasswordService = employeePasswordService;
+
+            _countryService = countryService;
             _phoneNumberTypeService = phoneNumberTypeService;
             _emailTypeService = emailTypeService;
             _positionService = positionService;
         }
 
-        public async Task<Employee> Handle(CreateEmployeeCommand request, CancellationToken cancellationToken)
+        public async Task<Employee> Handle(CreateEmployeeDto request, CancellationToken cancellationToken)
         {
             // Tarih
 
@@ -56,10 +60,12 @@ namespace hris.Staff.Application.Command
             {
                 var phoneNumber = request.PhoneNumbers[i];
                 var phoneNumberType = await _phoneNumberTypeService.GetByIdOrThrowAsync(phoneNumber.PhoneTypeId);
+                var country = await _countryService.GetByIdAsync(phoneNumber.CountryId);
 
                 newEmployee.PhoneNumbers.Add(new EmployeePhoneNumber
                 {
                     PhoneNumber = phoneNumber.PhoneNumber,
+                    Country = country,
                     PhoneNumberType = phoneNumberType,
                     CreatedAt = createdAt,
                 });
@@ -70,7 +76,7 @@ namespace hris.Staff.Application.Command
             for (int i = 0; i < request.Emails.Count; i++)
             {
                 var email = request.Emails[i];
-                var emailType = await _emailTypeService.GetByIdOrThrowAsync(email.EmailTypeId);
+                var emailType = await _emailTypeService.GetByIdAsync(email.EmailTypeId);
 
                 newEmployee.Emails.Add(new EmployeeEmail
                 {
@@ -95,7 +101,7 @@ namespace hris.Staff.Application.Command
 
             // Pozisyon ekleniyor
 
-            var position = await _positionService.GetByIdThrowAsync(request.PositionId);
+            var position = await _positionService.GetByIdAsync(request.PositionId);
 
             newEmployee.Positions.Add(new EmployeePosition
             {

@@ -8,8 +8,8 @@ using Microsoft.OpenApi.Models;
 using System.Reflection;
 using MediatR;
 using AutoMapper;
-using hris.Staff.Application.Mapping;
-using hris.DepartmentModule.Application.Service;
+using hris.Division.Application.Service;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +27,7 @@ builder.Services.AddScoped<EmployeeService>();
 builder.Services.AddScoped<EmployeeEmailService>();
 builder.Services.AddScoped<EmployeePasswordService>();
 
+builder.Services.AddScoped<CountryService>();
 builder.Services.AddScoped<EmailTypeService>();
 builder.Services.AddScoped<PhoneNumberTypeService>();
 builder.Services.AddScoped<DepartmentService>();

@@ -1,7 +1,7 @@
 ﻿using hris.Staff.Domain.Entities;
 using hris.Seed.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using hris.DepartmentModule.Domain.Entities;
+using hris.Division.Domain.Entities;
 
 namespace hris.Database
 {
@@ -113,9 +113,9 @@ namespace hris.Database
             );
 
             modelBuilder.Entity<Country>().HasData(
-                new Country { Id = 1, Name = "Turkey" }, // Türkiye
-                new Country { Id = 2, Name = "USA" }, // ABD
-                new Country { Id = 3, Name = "Germany" } // Almanya
+               new Country { Id = 1, Name = "Turkey", PhoneCode = "+90", ShortCode = "TR" }, // Türkiye
+               new Country { Id = 2, Name = "USA", PhoneCode = "+1", ShortCode = "US" }, // ABD
+               new Country { Id = 3, Name = "Germany", PhoneCode = "+49", ShortCode = "DE" } // Almanya
             );
 
             modelBuilder.Entity<DocumentType>().HasData(

@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using hris.Seed.Domain.Entities;
 
-namespace hris.DepartmentModule.Domain.Entities
+namespace hris.Division.Domain.Entities
 {
     public class Department
     {

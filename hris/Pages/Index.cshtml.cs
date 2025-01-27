@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using hris.Staff.Application.Service;
 using hris.Seed.Application.Service;
-using hris.DepartmentModule.Application.Service;
+using hris.Division.Application.Service;
 
 namespace hris.Pages
 {
@@ -28,9 +28,9 @@ namespace hris.Pages
 
         public async Task OnGetAsync()
         {
-            TotalEmployees = await _employeeService.GetTotalEmployeesAsync();
-            TotalDepartments = await _departmentService.GetTotalDepartmentsAsync();
-            TotalPositions = await _positionService.GetTotalPositionsAsync();
+            TotalEmployees = await _employeeService.GetTotalCountAsync();
+            TotalDepartments = await _departmentService.GetTotalCountAsync();
+            TotalPositions = await _positionService.GetTotalCountAsync();
 
         }
     }

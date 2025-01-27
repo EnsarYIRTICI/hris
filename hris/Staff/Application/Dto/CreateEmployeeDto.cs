@@ -1,8 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using hris.Staff.Domain.Entities;
+using MediatR;
+using System.ComponentModel.DataAnnotations;
 
 namespace hris.Staff.Application.Dto
 {
-    public class CreateEmployeeDto
+    public class CreateEmployeeDto : IRequest<Employee>
     {
         [Required, MaxLength(100)]
         public string FirstName { get; set; }
@@ -50,6 +52,9 @@ namespace hris.Staff.Application.Dto
 
         [Required]
         public int PhoneTypeId { get; set; }
+
+        [Required]
+        public int CountryId { get; set; }
     }
 
 }

@@ -9,8 +9,8 @@
     @await Html.PartialAsync("_Breadcrumb", Tuple.Create(Model.Breadcrumbs.AsEnumerable()))
 
 
-    <div class="max-w-4xl mx-auto bg-white shadow-md rounded-lg overflow-hidden">
-        <div class="bg-gradient-to-r from-blue-300 to-purple-500 text-white text-center py-4">
+    <div class="max-w-4xl mx-auto md:mx-8 bg-white shadow-md rounded-lg overflow-hidden">
+        <div class="bg-gradient-to-r from-gray-600 to-gray-400 text-white text-center py-4">
             <h1 class="text-2xl font-bold">Employee Details</h1>
         </div>
 
@@ -33,54 +33,90 @@
 
             <h2 class="text-xl font-semibold mt-6 mb-4">Contact Details</h2>
             <div class="grid grid-cols-2 gap-4">
-                @foreach (var phone in Model.Employee.PhoneNumbers)
+                @if (Model.Employee.PhoneNumbers.Any())
                 {
-                    <p class="text-gray-700"><span class="font-semibold">Phone:</span> @phone.PhoneNumber</p>
+                    foreach (var phone in Model.Employee.PhoneNumbers)
+                    {
+                        <p class="text-gray-700"><span class="font-semibold">Phone:</span> @phone.PhoneNumber</p>
+                    }
                 }
-                @foreach (var email in Model.Employee.Emails)
+                else
                 {
-                    <p class="text-gray-700"><span class="font-semibold">Email:</span> @email.Email</p>
+                    <p class="text-gray-500">No phone numbers available.</p>
+                }
+
+                @if (Model.Employee.Emails.Any())
+                {
+                    foreach (var email in Model.Employee.Emails)
+                    {
+                        <p class="text-gray-700"><span class="font-semibold">Email:</span> @email.Email</p>
+                    }
+                }
+                else
+                {
+                    <p class="text-gray-500">No email addresses available.</p>
                 }
             </div>
 
             <h2 class="text-xl font-semibold mt-6 mb-4">Addresses</h2>
             <div class="space-y-4">
-                @foreach (var address in Model.Employee.Addresses)
+                @if (Model.Employee.Addresses.Any())
                 {
-                    <div class="border border-gray-200 p-4 rounded-lg">
-                        <p class="text-gray-700"><span class="font-semibold">Address Line 1:</span> @address.AddressLine1</p>
-                        @if (!string.IsNullOrWhiteSpace(address.AddressLine2))
-                        {
-                            <p class="text-gray-700"><span class="font-semibold">Address Line 2:</span> @address.AddressLine2</p>
-                        }
-                        <p class="text-gray-700"><span class="font-semibold">City:</span> @address.City.Name</p>
-                        <p class="text-gray-700"><span class="font-semibold">Postal Code:</span> @address.PostalCode</p>
-                    </div>
+                    foreach (var address in Model.Employee.Addresses)
+                    {
+                        <div class="border border-gray-200 p-4 rounded-lg">
+                            <p class="text-gray-700"><span class="font-semibold">Address Line 1:</span> @address.AddressLine1</p>
+                            @if (!string.IsNullOrWhiteSpace(address.AddressLine2))
+                            {
+                                <p class="text-gray-700"><span class="font-semibold">Address Line 2:</span> @address.AddressLine2</p>
+                            }
+                            <p class="text-gray-700"><span class="font-semibold">City:</span> @address.City.Name</p>
+                            <p class="text-gray-700"><span class="font-semibold">Postal Code:</span> @address.PostalCode</p>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-gray-500">No addresses available.</p>
                 }
             </div>
 
             <h2 class="text-xl font-semibold mt-6 mb-4">Education</h2>
             <div class="space-y-4">
-                @foreach (var education in Model.Employee.Educations)
+                @if (Model.Employee.Educations.Any())
                 {
-                    <div class="border border-gray-200 p-4 rounded-lg">
-                        <p class="text-gray-700"><span class="font-semibold">School Name:</span> @education.SchoolName</p>
-                        <p class="text-gray-700"><span class="font-semibold">Degree:</span> @education.Degree</p>
-                        <p class="text-gray-700"><span class="font-semibold">Start Date:</span> @education.StartDate?.ToString("dd/MM/yyyy")</p>
-                        <p class="text-gray-700"><span class="font-semibold">End Date:</span> @education.EndDate?.ToString("dd/MM/yyyy")</p>
-                    </div>
+                    foreach (var education in Model.Employee.Educations)
+                    {
+                        <div class="border border-gray-200 p-4 rounded-lg">
+                            <p class="text-gray-700"><span class="font-semibold">School Name:</span> @education.SchoolName</p>
+                            <p class="text-gray-700"><span class="font-semibold">Degree:</span> @education.Degree</p>
+                            <p class="text-gray-700"><span class="font-semibold">Start Date:</span> @education.StartDate?.ToString("dd/MM/yyyy")</p>
+                            <p class="text-gray-700"><span class="font-semibold">End Date:</span> @education.EndDate?.ToString("dd/MM/yyyy")</p>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-gray-500">No education details available.</p>
                 }
             </div>
 
             <h2 class="text-xl font-semibold mt-6 mb-4">Documents</h2>
             <div class="space-y-4">
-                @foreach (var document in Model.Employee.Documents)
+                @if (Model.Employee.Documents.Any())
                 {
-                    <div class="border border-gray-200 p-4 rounded-lg">
-                        <p class="text-gray-700"><span class="font-semibold">Document Type:</span> @document.DocumentType.Name</p>
-                        <p class="text-gray-700"><span class="font-semibold">Uploaded At:</span> @document.UploadedAt.ToString("dd/MM/yyyy")</p>
-                        <p class="text-gray-700"><span class="font-semibold">File Path:</span> @document.FilePath</p>
-                    </div>
+                    foreach (var document in Model.Employee.Documents)
+                    {
+                        <div class="border border-gray-200 p-4 rounded-lg">
+                            <p class="text-gray-700"><span class="font-semibold">Document Type:</span> @document.DocumentType.Name</p>
+                            <p class="text-gray-700"><span class="font-semibold">Uploaded At:</span> @document.UploadedAt.ToString("dd/MM/yyyy")</p>
+                            <p class="text-gray-700"><span class="font-semibold">File Path:</span> @document.FilePath</p>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-gray-500">No documents available.</p>
                 }
             </div>
         </div>

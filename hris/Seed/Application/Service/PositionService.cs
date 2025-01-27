@@ -2,8 +2,6 @@
 using hris.Seed.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using hris.Database;
-using hris.Staff.Domain.Entities;
-using hris.DepartmentModule.Domain.Entities;
 
 namespace hris.Seed.Application.Service
 {
@@ -16,24 +14,13 @@ namespace hris.Seed.Application.Service
             _context = context;
         }
 
-        public async Task<Position> GetAdminPositionAsync()
-        {
-            return await GetByNameOrThrowAsync("Yönetici");
-        }
-
-
-        public async Task<Position> GetSoftwareDeveloperPositionAsync()
-        {
-            return await GetByNameOrThrowAsync("Software Developer");
-        }
-
-        public async Task<int> GetTotalPositionsAsync()
+        public async Task<int> GetTotalCountAsync()
         {
             return await _context.Positions.CountAsync();
         }
 
 
-        public async Task<List<Position>> GetAllSameDepartmentPositionsByIdAsync(int positionId)
+        public async Task<List<Position>?> GetAllSameDepartmentPositionsByIdAsync(int positionId)
         {
             var position = await _context.Positions
                 .Include(p=>p.Department)
@@ -41,7 +28,7 @@ namespace hris.Seed.Application.Service
 
             if (position == null)
             {
-                throw new PositionNotFoundException(positionId);
+                return null;
             }
 
             return await GetAllByDepartmentIdAsync(position.DepartmentId);
@@ -56,24 +43,16 @@ namespace hris.Seed.Application.Service
         }
 
 
-        private async Task<Position> GetByNameOrThrowAsync(string name)
+        public async Task<Position?> GetByNameAsync(string name)
         {
-            var position = await _context.Positions.FirstOrDefaultAsync(p => p.Name == name);
-            if (position == null)
-            {
-                throw new PositionNotFoundException(name);
-            }
-            return position;
+            return await _context.Positions.FirstOrDefaultAsync(p => p.Name == name);
+    
         }
 
-        public async Task<Position> GetByIdThrowAsync(int positionId)
+        public async Task<Position?> GetByIdAsync(int positionId)
         {
-            var position = await _context.Positions.FirstOrDefaultAsync(p => p.Id == positionId);
-            if (position == null)
-            {
-                throw new PositionNotFoundException(positionId);
-            }
-            return position;
+            return await _context.Positions.FirstOrDefaultAsync(p => p.Id == positionId);
+       
         }
 
         public async Task<List<Position>> GetAllAsync()

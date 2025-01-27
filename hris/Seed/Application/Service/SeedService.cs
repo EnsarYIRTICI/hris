@@ -21,9 +21,11 @@ namespace hris.Seed.Application.Service
         private readonly IMapper _mapper;
         private readonly IMediator _mediator;
 
-        public SeedService(EmployeeService employeeService)
+        public SeedService(EmployeeService employeeService, IMapper mapper, IMediator mediator)
         {
             _employeeService = employeeService;
+            _mapper = mapper;
+            _mediator = mediator;
         }
 
         public async Task<Employee> SeedAdminEmployeeAsync()
@@ -50,6 +52,16 @@ namespace hris.Seed.Application.Service
                         {
                             Email = "turing@turing.com",
                             EmailTypeId = 2
+                        },
+                  
+                    },
+                    PhoneNumbers = new List<PhoneDto>
+                    {
+                        new PhoneDto
+                        {
+                            PhoneNumber = "5355252071",
+                            PhoneTypeId = 2,
+                            CountryId=1,
                         }
                     },
                     Password = "turing",
@@ -57,8 +69,7 @@ namespace hris.Seed.Application.Service
 
                 };
 
-                var command = _mapper.Map<CreateEmployeeCommand>(createEmployeeDto);
-                var employee = await _mediator.Send(command);
+                var employee = await _mediator.Send(createEmployeeDto);
 
                 return employee;
 

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace hris.Migrations
 {
     /// <inheritdoc />
-    public partial class first : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -34,7 +34,9 @@ namespace hris.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    PhoneCode = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
+                    ShortCode = table.Column<string>(type: "nvarchar(3)", maxLength: 3, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -42,7 +44,7 @@ namespace hris.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Department",
+                name: "Departments",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -51,7 +53,21 @@ namespace hris.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Department", x => x.Id);
+                    table.PrimaryKey("PK_Departments", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DocumentTypes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DocumentTypes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -76,7 +92,9 @@ namespace hris.Migrations
                     FirstName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Tckn = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastPasswordChange = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -156,7 +174,7 @@ namespace hris.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Position",
+                name: "Positions",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -166,11 +184,11 @@ namespace hris.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Position", x => x.Id);
+                    table.PrimaryKey("PK_Positions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Position_Department_DepartmentId",
+                        name: "FK_Positions_Departments_DepartmentId",
                         column: x => x.DepartmentId,
-                        principalTable: "Department",
+                        principalTable: "Departments",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -210,13 +228,19 @@ namespace hris.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     EmployeeId = table.Column<int>(type: "int", nullable: false),
-                    DocumentName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    DocumentTypeId = table.Column<int>(type: "int", nullable: false),
                     FilePath = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     UploadedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_EmployeeDocuments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_EmployeeDocuments_DocumentTypes_DocumentTypeId",
+                        column: x => x.DocumentTypeId,
+                        principalTable: "DocumentTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_EmployeeDocuments_Employees_EmployeeId",
                         column: x => x.EmployeeId,
@@ -255,7 +279,11 @@ namespace hris.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     EmployeeId = table.Column<int>(type: "int", nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    IsValid = table.Column<bool>(type: "bit", nullable: false),
+                    IsApproved = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EmailTypeId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -284,9 +312,9 @@ namespace hris.Migrations
                     EmployeeId = table.Column<int>(type: "int", nullable: false),
                     PasswordHash = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
                     PasswordSalt = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    IsValid = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ExpiryDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                    ExpiryDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -358,12 +386,20 @@ namespace hris.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     EmployeeId = table.Column<int>(type: "int", nullable: false),
-                    Number = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
-                    PhoneNumberTypeId = table.Column<int>(type: "int", nullable: false)
+                    PhoneNumber = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    PhoneNumberTypeId = table.Column<int>(type: "int", nullable: false),
+                    CountryId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_EmployeePhoneNumbers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_EmployeePhoneNumbers_Countries_CountryId",
+                        column: x => x.CountryId,
+                        principalTable: "Countries",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_EmployeePhoneNumbers_Employees_EmployeeId",
                         column: x => x.EmployeeId,
@@ -435,30 +471,29 @@ namespace hris.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "EmployeePosition",
+                name: "EmployeePositions",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     EmployeeId = table.Column<int>(type: "int", nullable: false),
-                    PositionTemplateId = table.Column<int>(type: "int", nullable: false),
+                    PositionId = table.Column<int>(type: "int", nullable: false),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    PositionId = table.Column<int>(type: "int", nullable: false)
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EmployeePosition", x => x.Id);
+                    table.PrimaryKey("PK_EmployeePositions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_EmployeePosition_Employees_EmployeeId",
+                        name: "FK_EmployeePositions_Employees_EmployeeId",
                         column: x => x.EmployeeId,
                         principalTable: "Employees",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_EmployeePosition_Position_PositionId",
+                        name: "FK_EmployeePositions_Positions_PositionId",
                         column: x => x.PositionId,
-                        principalTable: "Position",
+                        principalTable: "Positions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -478,9 +513,9 @@ namespace hris.Migrations
                 {
                     table.PrimaryKey("PK_Salary", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Salary_EmployeePosition_PositionId",
+                        name: "FK_Salary_EmployeePositions_PositionId",
                         column: x => x.PositionId,
-                        principalTable: "EmployeePosition",
+                        principalTable: "EmployeePositions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -490,20 +525,37 @@ namespace hris.Migrations
                 columns: new[] { "Id", "Address", "Name", "SwiftCode" },
                 values: new object[,]
                 {
-                    { 1, null, "Ziraat Bankası", "TCZBTR2A" },
+                    { 1, null, "Ziraat Bank", "TCZBTR2A" },
                     { 2, null, "Garanti BBVA", "TGBATRIS" },
                     { 3, null, "Akbank", "AKBKTRIS" },
-                    { 4, null, "Yapı Kredi Bankası", "YAPITRISFEX" }
+                    { 4, null, "Yapı Kredi Bank", "YAPITRISFEX" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Countries",
-                columns: new[] { "Id", "Name" },
+                columns: new[] { "Id", "Name", "PhoneCode", "ShortCode" },
                 values: new object[,]
                 {
-                    { 1, "Türkiye" },
-                    { 2, "ABD" },
-                    { 3, "Almanya" }
+                    { 1, "Turkey", "+90", "TR" },
+                    { 2, "USA", "+1", "US" },
+                    { 3, "Germany", "+49", "DE" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Departments",
+                columns: new[] { "Id", "Name" },
+                values: new object[] { 1, "IT" });
+
+            migrationBuilder.InsertData(
+                table: "DocumentTypes",
+                columns: new[] { "Id", "Description", "Name" },
+                values: new object[,]
+                {
+                    { 1, null, "ID Copy" },
+                    { 2, null, "Health Report" },
+                    { 3, null, "Criminal Record" },
+                    { 4, null, "Proof of Residence" },
+                    { 5, null, "Education Certificate" }
                 });
 
             migrationBuilder.InsertData(
@@ -520,9 +572,9 @@ namespace hris.Migrations
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
                 {
-                    { 1, "Evli" },
-                    { 2, "Bekar" },
-                    { 3, "Dul" }
+                    { 1, "Married" },
+                    { 2, "Single" },
+                    { 3, "Widowed" }
                 });
 
             migrationBuilder.InsertData(
@@ -530,9 +582,9 @@ namespace hris.Migrations
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
                 {
-                    { 1, "Tamamlandı" },
-                    { 2, "Tecilli" },
-                    { 3, "Muaf" }
+                    { 1, "Completed" },
+                    { 2, "Deferred" },
+                    { 3, "Exempt" }
                 });
 
             migrationBuilder.InsertData(
@@ -550,11 +602,20 @@ namespace hris.Migrations
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
                 {
-                    { 1, "Anne" },
-                    { 2, "Baba" },
-                    { 3, "Eş" },
-                    { 4, "Kardeş" },
-                    { 5, "Arkadaş" }
+                    { 1, "Mother" },
+                    { 2, "Father" },
+                    { 3, "Spouse" },
+                    { 4, "Sibling" },
+                    { 5, "Friend" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Positions",
+                columns: new[] { "Id", "DepartmentId", "Name" },
+                values: new object[,]
+                {
+                    { 1, 1, "Manager" },
+                    { 2, 1, "Software Developer" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -583,6 +644,11 @@ namespace hris.Migrations
                 column: "EmployeeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_EmployeeDocuments_DocumentTypeId",
+                table: "EmployeeDocuments",
+                column: "DocumentTypeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_EmployeeDocuments_EmployeeId",
                 table: "EmployeeDocuments",
                 column: "EmployeeId");
@@ -593,14 +659,22 @@ namespace hris.Migrations
                 column: "EmployeeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_EmployeeEmails_Email",
+                table: "EmployeeEmails",
+                column: "Email",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_EmployeeEmails_EmailTypeId",
                 table: "EmployeeEmails",
                 column: "EmailTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EmployeeEmails_EmployeeId",
+                name: "IX_EmployeeEmails_EmployeeId_IsValid",
                 table: "EmployeeEmails",
-                column: "EmployeeId");
+                columns: new[] { "EmployeeId", "IsValid" },
+                unique: true,
+                filter: "[IsValid] = 1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EmployeeMaritalStatuses_EmployeeId",
@@ -623,11 +697,16 @@ namespace hris.Migrations
                 column: "MilitaryStatusTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EmployeePasswords_EmployeeId_IsActive",
+                name: "IX_EmployeePasswords_EmployeeId_IsValid",
                 table: "EmployeePasswords",
-                columns: new[] { "EmployeeId", "IsActive" },
+                columns: new[] { "EmployeeId", "IsValid" },
                 unique: true,
-                filter: "[IsActive] = 1");
+                filter: "[IsValid] = 1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EmployeePhoneNumbers_CountryId",
+                table: "EmployeePhoneNumbers",
+                column: "CountryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EmployeePhoneNumbers_EmployeeId",
@@ -640,13 +719,13 @@ namespace hris.Migrations
                 column: "PhoneNumberTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EmployeePosition_EmployeeId",
-                table: "EmployeePosition",
+                name: "IX_EmployeePositions_EmployeeId",
+                table: "EmployeePositions",
                 column: "EmployeeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EmployeePosition_PositionId",
-                table: "EmployeePosition",
+                name: "IX_EmployeePositions_PositionId",
+                table: "EmployeePositions",
                 column: "PositionId");
 
             migrationBuilder.CreateIndex(
@@ -660,8 +739,14 @@ namespace hris.Migrations
                 column: "RelationshipTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Position_DepartmentId",
-                table: "Position",
+                name: "IX_Employees_Tckn",
+                table: "Employees",
+                column: "Tckn",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Positions_DepartmentId",
+                table: "Positions",
                 column: "DepartmentId");
 
             migrationBuilder.CreateIndex(
@@ -713,6 +798,9 @@ namespace hris.Migrations
                 name: "Banks");
 
             migrationBuilder.DropTable(
+                name: "DocumentTypes");
+
+            migrationBuilder.DropTable(
                 name: "EmailTypes");
 
             migrationBuilder.DropTable(
@@ -728,7 +816,7 @@ namespace hris.Migrations
                 name: "RelationshipTypes");
 
             migrationBuilder.DropTable(
-                name: "EmployeePosition");
+                name: "EmployeePositions");
 
             migrationBuilder.DropTable(
                 name: "Countries");
@@ -737,10 +825,10 @@ namespace hris.Migrations
                 name: "Employees");
 
             migrationBuilder.DropTable(
-                name: "Position");
+                name: "Positions");
 
             migrationBuilder.DropTable(
-                name: "Department");
+                name: "Departments");
         }
     }
 }

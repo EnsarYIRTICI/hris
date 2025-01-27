@@ -29,8 +29,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="DocumentModule\Application\Service\" />
-    <Folder Include="DocumentModule\Domain\Entities\" />
+    <Folder Include="Paper\Application\Service\" />
+    <Folder Include="Paper\Domain\Entities\" />
+    <Folder Include="Staff\Application\Command\" />
   </ItemGroup>
 
 </Project>

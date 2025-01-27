@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using hris.DepartmentModule.Application.Service;
-using hris.DepartmentModule.Domain.Entities;
+
+using hris.Division.Application.Service;
+using hris.Division.Domain.Entities;
 
 namespace hris.Pages.Departments
 {

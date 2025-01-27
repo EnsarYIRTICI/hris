@@ -18,7 +18,7 @@
 
             using (var scope = serviceProvider.CreateScope())
             {
-                var tokenService = scope.ServiceProvider.GetRequiredService<EmployeeTokenService>();
+                var employeeTokenService = scope.ServiceProvider.GetRequiredService<EmployeeTokenService>();
 
                 if (string.IsNullOrEmpty(token)) // Token boş ise kontrol yapılır.
                 {
@@ -33,7 +33,7 @@
                     return;
                 }
 
-                var validationResult = await tokenService.ValidateToken(token); // Token doğrulanır.
+                var validationResult = await employeeTokenService.ValidateToken(token); // Token doğrulanır.
 
                 if (validationResult.IsValid) // Token geçerliyse kullanıcı bilgileri eklenir.
                 {

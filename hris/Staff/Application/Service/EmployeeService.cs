@@ -36,7 +36,7 @@ namespace hris.Staff.Application.Service
             _phoneNumberTypeService = phoneNumberTypeService;
         }
 
-        public async Task<int> GetTotalEmployeesAsync()
+        public async Task<int> GetTotalCountAsync()
         {
             return await _context.Employees.CountAsync();
         }
@@ -63,22 +63,11 @@ namespace hris.Staff.Application.Service
                 .ToListAsync();
         }
 
-        public async Task<Employee> GetByIdAsync(int employeeId)
+     
+
+        public async Task<Employee?> GetByIdWithDetailsAsync(int employeeId)
         {
-            Employee? employee = await _context.Employees
-                .FirstOrDefaultAsync(e => e.Id == employeeId);
-
-            if (employee == null)
-            {
-                throw new EmployeeNotFoundException();
-            }
-
-            return employee;
-        }
-
-        public async Task<Employee> GetByIdWithDetailsAsync(int employeeId)
-        {
-            Employee? employee = await _context.Employees
+            return await _context.Employees
              .Include(e => e.Passwords)
              .Include(e => e.Emails)
              .Include(e => e.Addresses)
@@ -89,27 +78,25 @@ namespace hris.Staff.Application.Service
              .Include(e => e.Positions)
              .Include(e => e.Documents)
              .FirstOrDefaultAsync(e => e.Id == employeeId);
-
-            if (employee == null)
-            {
-                throw new EmployeeNotFoundException();
-            }
-
-            return employee;
+        
         }
 
-
-        public async Task<Employee?> GetByTcknAsync(string Tckn)
-        {
-            return await _context.Employees
-                .FirstOrDefaultAsync(e => e.Tckn == Tckn);
-        }
 
         public async Task<EmployeeSummary?> GetSummaryByIdAsync(int employeeId)
         {
-            Employee employee = await GetByIdAsync(employeeId);
+            Employee? employee = await GetByIdAsync(employeeId);
+
+            if(employee == null)
+            {
+                return null;
+            }
 
             EmployeeEmail validatedEmail = await _employeeEmailService.GetValidEmailsAsync(employee);
+
+            if (validatedEmail == null)
+            {
+                return null;
+            }
 
             return new EmployeeSummary()
             {
@@ -120,10 +107,22 @@ namespace hris.Staff.Application.Service
             };
         }
 
-        public async Task UpdateAsync(UpdateEmployeeDto updateEmployeeDto)
+        public async Task<Employee?> GetByIdAsync(int employeeId)
         {
-            Employee employee = await GetByIdAsync(updateEmployeeDto.Id);
+            Employee? employee = await _context.Employees
+                .FirstOrDefaultAsync(e => e.Id == employeeId);
 
+            return employee;
+        }
+
+        public async Task<Employee?> GetByTcknAsync(string Tckn)
+        {
+            return await _context.Employees
+                .FirstOrDefaultAsync(e => e.Tckn == Tckn);
+        }
+
+        public async Task UpdateAsync(Employee? employee, UpdateEmployeeDto updateEmployeeDto)
+        {
             employee.DateOfBirth = updateEmployeeDto.DateOfBirth;
             employee.FirstName = updateEmployeeDto.FirstName;
             employee.LastName = updateEmployeeDto.LastName;
@@ -133,10 +132,8 @@ namespace hris.Staff.Application.Service
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(int employeeId)
+        public async Task DeleteAsync(Employee employee)
         {
-            Employee employee = await GetByIdAsync(employeeId);
-
             _context.Employees.Remove(employee);
             await _context.SaveChangesAsync();
         }
