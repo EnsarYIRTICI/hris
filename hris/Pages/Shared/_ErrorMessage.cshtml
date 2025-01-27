@@ -1,0 +1,26 @@
+﻿
+@model Tuple<bool, string>
+
+@{
+}
+
+
+@if (!Model.Item1 || !string.IsNullOrEmpty(Model.Item2))
+{
+    <div class="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg" role="alert">
+        @if (!Model.Item1)
+        {
+            <p>Lütfen aşağıdaki hataları düzeltin:</p>
+            <ul class="mt-2 list-disc list-inside">
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <li>@error.ErrorMessage</li>
+                }
+            </ul>
+        }
+        @if (!string.IsNullOrEmpty(Model.Item2))
+        {
+            <p>@Model.Item2</p>
+        }
+    </div>
+}

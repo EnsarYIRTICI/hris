@@ -13,14 +13,11 @@ namespace hris.Staff.Application.Dto
         [Required, MaxLength(200)]
         public string Tckn { get; set; }
 
-        [Required]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime DateOfBirth { get; set; }
 
         [Required, MinLength(8)]
         public string Password { get; set; }
-
-        [Required]
-        public int DepartmentId { get; set; }
 
         [Required]
         public int PositionId { get; set; }
@@ -28,6 +25,10 @@ namespace hris.Staff.Application.Dto
         public List<EmailDto> Emails { get; set; } = new List<EmailDto> { new EmailDto() };
 
         public List<PhoneDto> PhoneNumbers { get; set; } = new List<PhoneDto> { new PhoneDto() };
+
+        public int DepartmentId { get; set; }
+        public bool AddEmail { get; set; } = false;
+        public bool AddPhone { get; set; } = false;
     }
 
 

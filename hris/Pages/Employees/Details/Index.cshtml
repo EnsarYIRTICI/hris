@@ -6,20 +6,8 @@
 
 <div class="flex-1 p-5">
 
-    <nav class="flex items-center text-gray-500 space-x-2 my-6">
-        @foreach (var breadcrumb in Model.Breadcrumbs)
-        {
-            if (!string.IsNullOrEmpty(breadcrumb.Url))
-            {
-                <a href="@breadcrumb.Url" class="hover:text-blue-500">@breadcrumb.Name</a>
-                <span>/</span>
-            }
-            else
-            {
-                <span class="text-gray-800 font-semibold">@breadcrumb.Name</span>
-            }
-        }
-    </nav>
+    @await Html.PartialAsync("_Breadcrumb", Tuple.Create(Model.Breadcrumbs.AsEnumerable()))
+
 
     <div class="max-w-4xl mx-auto bg-white shadow-md rounded-lg overflow-hidden">
         <div class="bg-gradient-to-r from-blue-300 to-purple-500 text-white text-center py-4">

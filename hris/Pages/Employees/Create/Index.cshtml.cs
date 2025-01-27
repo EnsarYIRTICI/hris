@@ -75,33 +75,16 @@ namespace hris.Pages.Employees.Create
             EmailTypes = await _emailTypeService.GetAllAsync();
             PhoneNumberTypes = await _phoneNumberTypeService.GetAllAsync();
 
-
-            ViewData["EmailTypeSelectList"] = EmailTypes
-              .Select(et => new SelectListItem
-              {
-                  Value = et.Id.ToString(),
-                  Text = et.Name
-              })
-              .ToList();
-
-            ViewData["PhoneNumberTypeSelectList"] = PhoneNumberTypes
-                .Select(pt => new SelectListItem
-                {
-                    Value = pt.Id.ToString(),
-                    Text = pt.Name
-                })
-                .ToList();
-
             Departments = await _departmentService.GetAllAsync();
+            Positions = new List<Position> { };
 
-            if(CreateEmployee.DepartmentId != 0)
+            if (CreateEmployee.DepartmentId > 0)
             {
                 Positions = await _positionService.GetAllByDepartmentIdAsync(CreateEmployee.DepartmentId);
-
-            } else
+            }
+            else
             {
-                Positions = new List<Position> { };
-
+                Positions = new List<Position>();
             }
 
         }
@@ -120,29 +103,27 @@ namespace hris.Pages.Employees.Create
            
         }
 
-        public async Task<IActionResult> OnPostCreate()
+        public async Task<IActionResult> OnPost()
         {
             try
             {
-                if (!ModelState.IsValid)
+                ModelState.Clear();
+
+                if (CreateEmployee.AddEmail)
                 {
-                    await Init(false);
-                    return Page();
-                }
-
-                try {
-                    var command = _mapper.Map<CreateEmployeeCommand>(CreateEmployee);
-                    var employee = await _mediator.Send(command);
-
-                    SuccessMessage = "Employee created successfully!";
-
-                } catch (Exception ex) {
-
-                    ErrorMessage = ex.Message;       
+                    CreateEmployee.Emails.Add(new EmailDto());
+                    CreateEmployee.AddEmail = false;
 
                 }
 
-                await Init();
+                if (CreateEmployee.AddPhone)
+                {
+                    CreateEmployee.PhoneNumbers.Add(new PhoneDto());
+                    CreateEmployee.AddPhone = false;
+                }
+
+
+                await Init(false);
                 return Page();
 
             }
@@ -155,47 +136,43 @@ namespace hris.Pages.Employees.Create
 
         }
 
-        public async Task<IActionResult> OnPostAddEmail()
+        public async Task<IActionResult> OnPostCreate()
         {
-
             try
             {
-                ModelState.Clear();
+                if(!ModelState.IsValid)
+                {
+                    await Init(false);
+                    return Page();
+                }
 
-                CreateEmployee.Emails.Add(new EmailDto());
+                try
+                {
+                    var command = _mapper.Map<CreateEmployeeCommand>(CreateEmployee);
+                    var employee = await _mediator.Send(command);
 
-                await Init(false);
-                return Page();
-            } catch (Exception ex) {
+                    SuccessMessage = "Employee created successfully!";
 
-                Console.WriteLine(ex);
-            }
+                    await Init();
+                    return Page();
 
-            return Redirect("/employees");
+                }
+                catch (Exception ex)
+                {
+                    ErrorMessage = ex.Message;
 
-        }
-      
-
-        public async Task<IActionResult> OnPostAddPhone()
-        {
-
-            try
-            {
-                ModelState.Clear();
-
-                CreateEmployee.PhoneNumbers.Add(new PhoneDto());
-
-                await Init(false);
-                return Page();
+                    await Init(false);
+                    return Page();
+                }
             }
             catch (Exception ex)
             {
+
                 Console.WriteLine(ex);
             }
 
             return Redirect("/employees");
         }
-
 
 
     }

@@ -1,9 +1,15 @@
-﻿@model Tuple<int, IEnumerable<SelectListItem>, string>
+﻿@model Tuple<int, IEnumerable<hris.Seed.Domain.Entities.PhoneNumberType>, string, int>
+
+@{
+    int index = Model.Item1;
+}
+
 
 <div class="phone-item flex items-center space-x-4">
     <div class="w-2/3">
         <label class="block text-sm font-medium text-gray-700">Phone Number</label>
         <input type="text"
+               id="phoneField_@index"
                name="PhoneNumbers[@Model.Item1].PhoneNumber"
                value="@Model.Item3"
                required
@@ -15,13 +21,26 @@
     <div class="w-1/3">
         <label class="block text-sm font-medium text-gray-700">Type</label>
         <select name="PhoneNumbers[@Model.Item1].PhoneTypeId"
+                asp-for="@Model.Item4"
                 required
                 class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white">
             <option value="">Select</option>
             @foreach (var type in Model.Item2)
             {
-                <option value="@type.Value">@type.Text</option>
+                <option value="@type.Id">@type.Name</option>
             }
         </select>
     </div>
 </div>
+
+<script>
+
+    // Phone Field için sadece sayılara izin ver, ve 10 haneyi aşmamasını sağla
+
+    document.getElementById("phoneField_@index").addEventListener('input', function (e) {
+        const input = e.target.value;
+        e.target.value = input.replace(/\D/g, '').slice(0, 10);
+    });
+
+
+</script>

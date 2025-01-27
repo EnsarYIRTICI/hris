@@ -1,60 +1,27 @@
 ﻿@page
+@using Staff.Application.Dto
+@using hris.Pages.PageModels
 @model hris.Pages.Employees.Create.IndexModel
 @{
 }
 
 <section class="overflow-auto flex-1 h-full p-5">
 
-    <nav class="flex items-center text-gray-500 space-x-2 my-6">
-        @foreach (var breadcrumb in Model.Breadcrumbs)
-        {
-            if (!string.IsNullOrEmpty(breadcrumb.Url))
-            {
-                <a href="@breadcrumb.Url" class="hover:text-blue-500">@breadcrumb.Name</a>
-                <span>/</span>
-            }
-            else
-            {
-                <span class="text-gray-800 font-semibold">@breadcrumb.Name</span>
-            }
-        }
-    </nav>
+    @await Html.PartialAsync("_Breadcrumb", Tuple.Create(Model.Breadcrumbs.AsEnumerable()))
+
 
     <div class="p-6 mx-auto md:mx-8 md:my-8 bg-white rounded-xl shadow-md space-y-4 w-[27rem]">
         <h1 class="text-2xl font-bold text-gray-700">Create Employee</h1>
 
         <!-- Error Message -->
+        @await Html.PartialAsync("_ErrorMessage", Tuple.Create(ModelState.IsValid, Model.ErrorMessage))
 
-        @if (!ModelState.IsValid || !string.IsNullOrEmpty(Model.ErrorMessage))
-        {
-            <div class="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg" role="alert">
-                @if (!ModelState.IsValid)
-                {
-                    <p>Lütfen aşağıdaki hataları düzeltin:</p>
-                    <ul class="mt-2 list-disc list-inside">
-                        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-                        {
-                            <li>@error.ErrorMessage</li>
-                        }
-                    </ul>
-                }
-                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
-                {
-                    <p>@Model.ErrorMessage</p>
-                }
-            </div>
-        }
 
         <!-- Success Message -->
+        @await Html.PartialAsync("_SuccessMessage", Tuple.Create(Model.SuccessMessage))
 
-        @if (!string.IsNullOrEmpty(Model.SuccessMessage))
-        {
-            <div class="p-4 mb-4 text-sm text-green-700 bg-green-100 rounded-lg" role="alert">
-                <p>@Model.SuccessMessage</p>
-            </div>
-        }
 
-        <form method="post" class="space-y-4">
+        <form id="main-form" method="post" class="space-y-4" href="/">
 
             <!-- Fullname -->
 
@@ -111,7 +78,8 @@
                     <input type="date"
                            id="dateOfBirth"
                            name="DateOfBirth"
-                           value="@Model.CreateEmployee.DateOfBirth"
+                           asp-for="CreateEmployee.DateOfBirth"
+                           asp-format="{0:yyyy-MM-dd}"
                            required
                            class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
                 </div>
@@ -119,21 +87,24 @@
             </section>
 
 
-            <!-- Email and Phone Form -->
+            <!-- Emails and Phones -->
 
             <section class="w-full space-y-4">
 
+                <!-- Emails  -->
 
                 @for (int i = 0; i < Model.CreateEmployee.Emails.Count; i++)
                 {
-                    @Html.Partial("_EmailField", Tuple.Create(
+                    @await Html.PartialAsync("_EmailField", Tuple.Create(
                              i,
-                             ViewData["EmailTypeSelectList"] as IEnumerable<SelectListItem>,
-                             Model.CreateEmployee.Emails[i].Email
+                             Model.EmailTypes.AsEnumerable(),
+                             Model.CreateEmployee.Emails[i].Email,
+                             Model.CreateEmployee.Emails[i].EmailTypeId
                              ))
                 }
 
-                <button type="submit" formnovalidate asp-page-handler="AddEmail"
+
+                <div onclick="AddEmail()"
                         class="items-center flex text-blue-500 hover:text-blue-300 text-sm cursor-pointer transition-all">
 
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
@@ -145,19 +116,22 @@
                     </svg>
 
                     <span class="ml-1">Add Another Email</span>
-                </button>
+                </div>
 
+                <!-- Phones -->
 
                 @for (int i = 0; i < Model.CreateEmployee.PhoneNumbers.Count; i++)
                 {
-                    @Html.Partial("_PhoneField", Tuple.Create(
+                    @await Html.PartialAsync("_PhoneField", Tuple.Create(
                              i,
-                             ViewData["PhoneNumberTypeSelectList"] as IEnumerable<SelectListItem>,
-                             Model.CreateEmployee.PhoneNumbers[i].PhoneNumber
+                             Model.PhoneNumberTypes.AsEnumerable(),
+                             Model.CreateEmployee.PhoneNumbers[i].PhoneNumber,
+                             Model.CreateEmployee.PhoneNumbers[i].PhoneTypeId
                              ))
                 }
 
-                <button type="submit" formnovalidate asp-page-handler="AddPhone"
+
+                <div onclick="AddPhone();"
                         class="items-center flex text-blue-500 hover:text-blue-300 text-sm cursor-pointer transition-all">
 
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
@@ -169,44 +143,61 @@
                     </svg>
 
                     <span class="ml-1">Add Another Phone</span>
-                </button>
+                </div>
 
             </section>
 
 
 
-            <!-- Department Form -->
+            <!-- Department and Position -->
 
             <section class="w-full space-y-4">
+
+                <!-- Department -->
+
                 <div>
                     <label for="department" class="block text-sm font-medium text-gray-700">Department</label>
                     <select id="department"
                             name="DepartmentId"
+                            asp-for="CreateEmployee.DepartmentId"
+                            onchange="OnDepartmentChange()"
                             required
                             class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white">
                         <option value="">Select Department</option>
                         @foreach (var department in Model.Departments)
                         {
-                            <option value="@department.Id">@department.Name</option>
+                            <option value="@department.Id">
+                                @department.Name
+                            </option>
                         }
                     </select>
                 </div>
+
+                <!-- Position -->
 
                 <div>
                     <label for="position" class="block text-sm font-medium text-gray-700">Position</label>
                     <select id="position"
                             name="PositionId"
+                            asp-for="CreateEmployee.PositionId"
                             required
                             class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white">
                         <option value="">Select Position</option>
                         @foreach (var position in Model.Positions)
                         {
-                            <option value="@position.Id">@position.Name</option>
+                            <option value="@position.Id">
+                                @position.Name
+                            </option>                
                         }
                     </select>
                 </div>
 
+                <!-- Flex -->
+
                 <div class="flex-1"></div>
+
+
+                <!-- Submit Button -->
 
                 <div class="pt-4">
                     <button type="submit" asp-page-handler="Create"
@@ -215,35 +206,42 @@
                     </button>
                 </div>
 
-            </section>       
-            
+            </section>
 
+            <input type="hidden" name="AddEmail" asp-for=CreateEmployee.AddEmail value=@Model.CreateEmployee.AddEmail id="AddEmail">
+            <input type="hidden" name="AddPhone" asp-for=CreateEmployee.AddPhone value=@Model.CreateEmployee.AddPhone id="AddPhone">
         </form>
 
     </div>
 
-
-    <script>
-
-        // TCKN
-
-        document.getElementById('tckn').addEventListener('input', function (e) {
-            const input = e.target.value;
-            // Sadece sayılara izin ver, ve 11 haneyi aşmamasını sağla
-            e.target.value = input.replace(/\D/g, '').slice(0, 11);
-        })
-
-        // Phone and Email Types
-
-        @if (Model.EmailTypes != null && Model.PhoneNumberTypes != null)
-        {
-            <text>
-                    const emailTypes = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.EmailTypes));
-                    const phoneNumberTypes = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.PhoneNumberTypes));
-            </text>
-        }
-
-
-    </script>
 </section>
 
+
+<script>
+
+    function OnDepartmentChange() {
+        document.getElementById("main-form").action = "/employees/create";
+        document.getElementById("main-form").submit();
+    }
+
+    function AddEmail() {
+        document.getElementById('AddEmail').value = "true";
+        document.getElementById("main-form").action = "/employees/create";
+        document.getElementById("main-form").submit();
+    }
+
+    function AddPhone() {
+        document.getElementById('AddPhone').value = "true";
+        document.getElementById("main-form").action = "/employees/create";
+        document.getElementById("main-form").submit();
+    }
+
+
+    // TCKN Field için sadece sayılara izin ver, ve 11 haneyi aşmamasını sağla
+
+    document.getElementById('tckn').addEventListener('input', function (e) {
+        const input = e.target.value;
+        e.target.value = input.replace(/\D/g, '').slice(0, 11);
+    })
+
+</script>
