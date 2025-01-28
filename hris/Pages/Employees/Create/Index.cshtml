@@ -33,6 +33,7 @@
                            id="firstName"
                            name="FirstName"
                            value="@Model.CreateEmployee.FirstName"
+                           placeholder="Mehmet"
                            required
                            maxlength="100"
                            class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
@@ -44,6 +45,7 @@
                            id="lastName"
                            name="LastName"
                            value="@Model.CreateEmployee.LastName"
+                           placeholder="Yılmaz"
                            required
                            maxlength="100"
                            class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
@@ -56,6 +58,7 @@
                            name="Tckn"
                            value="@Model.CreateEmployee.Tckn"
                            required
+                           placeholder="12345678910"
                            maxlength="11"
                            pattern="\d{1,11}"
                            title="Only numbers are allowed, and the length should be 11 digits."
@@ -106,8 +109,8 @@
 
                 <!-- Add Email -->
 
-                <div onclick="AddEmail()" class="inline-flex items-center text-blue-500 hover:text-blue-300 text-sm cursor-pointer transition-all">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                <div onclick="AddEmail()" class="py-2 inline-flex items-center text-blue-500 hover:text-blue-300 cursor-pointer transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
                          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                          class="lucide lucide-circle-plus">
                         <circle cx="12" cy="12" r="10" />
@@ -115,8 +118,10 @@
                         <path d="M12 8v8" />
                     </svg>
 
-                    <span class="ml-1">Add Another Email</span>
+                    <span class="ml-1 text-xs">Add Another Email</span>
                 </div>
+
+                <div class="h-[0.1rem] bg-gray-200"></div>
 
 
                 <!-- Phones -->
@@ -136,9 +141,9 @@
                 <!-- Add Phone -->
 
 
-                <div onclick="AddPhone()" class="inline-flex items-center text-blue-500 hover:text-blue-300 text-sm cursor-pointer transition-all">
+                <div onclick="AddPhone()" class="py-2 inline-flex items-center text-blue-500 hover:text-blue-300 cursor-pointer transition-all">
 
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
                          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                          class="lucide lucide-circle-plus">
                         <circle cx="12" cy="12" r="10" />
@@ -146,8 +151,11 @@
                         <path d="M12 8v8" />
                     </svg>
 
-                    <span class="ml-1">Add Another Phone</span>
+                    <span class="ml-1 text-xs">Add Another Phone</span>
                 </div>
+
+                <div class="h-[0.1rem] bg-gray-200"></div>
+
 
             </section>
 
@@ -211,6 +219,9 @@
 
             <input id="AddEmail" type="hidden" name="AddEmail" asp-for=CreateEmployee.AddEmail value=@Model.CreateEmployee.AddEmail>
             <input id="AddPhone" type="hidden" name="AddPhone" asp-for=CreateEmployee.AddPhone value=@Model.CreateEmployee.AddPhone>
+
+            <input id="DeleteEmailId" type="hidden" name="DeleteEmailId" asp-for=CreateEmployee.DeleteEmailId value=@Model.CreateEmployee.DeleteEmailId>
+            <input id="DeletePhoneId" type="hidden" name="DeletePhoneId" asp-for=CreateEmployee.DeletePhoneId value=@Model.CreateEmployee.DeletePhoneId>
         </form>
 
     </div>
@@ -242,6 +253,19 @@
 
     function AddPhone() {
         document.getElementById('AddPhone').value = "true";
+        Refresh();
+    }
+
+    // Delete Phone and Email Fields
+
+
+    function DeleteEmail(index) {
+        document.getElementById('DeleteEmailId').value = index;
+        Refresh();
+    }
+
+    function DeletePhone(index) {
+        document.getElementById('DeletePhoneId').value = index;
         Refresh();
     }
 

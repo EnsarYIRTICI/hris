@@ -6,7 +6,10 @@
 
 
 <div class="phone-item flex items-center space-x-4">
-    <div class="w-1/4">
+
+    <!-- Country Code -->
+
+    <div class="w-[25%]">
         <label class="block text-sm font-medium text-gray-700">Type</label>
         <select name="PhoneNumbers[@Model.Item1].CountryId"
                 asp-for="@Model.Item6"
@@ -19,7 +22,10 @@
             }
         </select>
     </div>
-    <div class="w-2/4">
+
+    <!-- Phone Number -->
+
+    <div class="w-[35%]">
         <label class="block text-sm font-medium text-gray-700">Phone Number</label>
         <input type="text"
                id="phoneField_@index"
@@ -32,8 +38,12 @@
                title="Only numbers are allowed, and the length should be a maximum of 10 digits."
                class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
     </div>
-    <div class="w-1/4">
+
+    <!-- Phone Number Type -->
+
+    <div class="w-[30%]">
         <label class="block text-sm font-medium text-gray-700">Type</label>
+
         <select name="PhoneNumbers[@Model.Item1].PhoneTypeId"
                 asp-for="@Model.Item4"
                 required
@@ -44,7 +54,17 @@
                 <option value="@type.Id">@type.Name</option>
             }
         </select>
+
     </div>
+
+    <!-- Delete -->
+
+    <div onclick="DeletePhone(@Model.Item1)" class="w-[10%] text-xs mt-5 flex items-center justify-center ml-4 cursor-pointer text-red-500 hover:text-red-700">
+
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-2"><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" /><line x1="10" x2="10" y1="11" y2="17" /><line x1="14" x2="14" y1="11" y2="17" /></svg>
+
+    </div>
+
 </div>
 
 <script>

@@ -33,6 +33,8 @@ namespace hris.Staff.Application.Dto._Employee
         public int DepartmentId { get; set; }
         public bool AddEmail { get; set; } = false;
         public bool AddPhone { get; set; } = false;
+        public int DeleteEmailId { get; set; } 
+        public int DeletePhoneId { get; set; } 
 
 
     }

@@ -102,12 +102,13 @@ namespace hris.Pages.Employees.Create
                 Console.WriteLine(CreateEmployee.AddPhone);
                 Console.WriteLine(CreateEmployee.AddEmail);
                 Console.WriteLine(CreateEmployee.DepartmentId);
+                Console.WriteLine(CreateEmployee.DeleteEmailId);
+                Console.WriteLine(CreateEmployee.DeletePhoneId);
 
                 if (CreateEmployee.AddEmail)
                 {
                     CreateEmployee.Emails.Add(new EmailDto());
                     CreateEmployee.AddEmail = false;
-
                 }
 
                 if (CreateEmployee.AddPhone)
@@ -116,6 +117,19 @@ namespace hris.Pages.Employees.Create
                     CreateEmployee.AddPhone = false;
                 }
 
+                if (CreateEmployee.DeleteEmailId >= 0 && CreateEmployee.DeleteEmailId < CreateEmployee.Emails.Count && CreateEmployee.Emails.Count > 1)
+                {
+                    CreateEmployee.Emails.RemoveAt(CreateEmployee.DeleteEmailId);
+                   
+                }
+                CreateEmployee.DeleteEmailId = -1;
+
+                if (CreateEmployee.DeletePhoneId >= 0 && CreateEmployee.DeletePhoneId < CreateEmployee.PhoneNumbers.Count && CreateEmployee.PhoneNumbers.Count > 1)
+                {
+                    CreateEmployee.PhoneNumbers.RemoveAt(CreateEmployee.DeletePhoneId);
+                    
+                }
+                CreateEmployee.DeletePhoneId = -1;
 
                 await Init(false);
                 return Page();
