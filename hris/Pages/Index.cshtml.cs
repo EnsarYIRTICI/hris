@@ -1,10 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using hris.Staff.Application.Service;
-using hris.Seed.Application.Service;
-using hris.Division.Application.Service;
+
 using hris.Staff.Application.Query;
 using MediatR;
+using hris.Seed.Application.Query;
+using hris.Seed.Application.Query._Department;
+using hris.Seed.Application.Query._Position;
+using hris.Staff.Application.Query._Employee;
+using hris.Staff.Application.Query._EmployeeDocument;
 
 namespace hris.Pages
 {
@@ -12,28 +15,26 @@ namespace hris.Pages
     {
         private readonly IMediator _mediator;
 
-        private readonly DepartmentService _departmentService;
-        private readonly PositionService _positionService;
-
         public string Title { get; set; } = "Dashboard";
         public string Message { get; set; } = "Hello from Hris!";
 
         public int TotalEmployees { get; set; }
         public int TotalDepartments { get; set; }
         public int TotalPositions { get; set; }
+        public int TotalDocuments { get; set; }
 
-        public IndexModel(IMediator mediator, DepartmentService departmentService, PositionService positionService)
+
+        public IndexModel(IMediator mediator)
         {
-            _departmentService = departmentService;
-            _positionService = positionService;
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
         public async Task OnGetAsync()
         {
             TotalEmployees = await _mediator.Send(new GetEmployeeTotalCountQuery());
-            TotalDepartments = await _departmentService.GetTotalCountAsync();
-            TotalPositions = await _positionService.GetTotalCountAsync();
+            TotalDocuments = await _mediator.Send(new GetEmployeeDocumentTotalCountQuery());
+            TotalDepartments = await _mediator.Send(new GetDepartmentTotalCountQuery());
+            TotalPositions = await _mediator.Send(new GetPositionTotalCountQuery());
 
         }
     }

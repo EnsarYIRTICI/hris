@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
-using hris.Staff.Application.Command;
-using hris.Staff.Application.Dto;
+using hris.Staff.Application.Command._Employee;
+using hris.Staff.Application.Dto._Employee;
 using hris.Staff.Application.Query;
+using hris.Staff.Application.Query._Employee;
 using hris.Staff.Domain.Entities;
 using MediatR;
 

@@ -1,24 +1,26 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-using hris.Division.Application.Service;
-using hris.Division.Domain.Entities;
+using hris.Seed.Domain.Entities;
+using hris.Seed.Application.Query;
+using MediatR;
+using hris.Seed.Application.Query._Department;
 
 namespace hris.Pages.Departments
 {
     public class IndexModel : PageModel
     {
-        private readonly DepartmentService _departmentService;
+        private readonly IMediator _mediator;
 
         public List<Department> Departments { get; set; } = new List<Department>();
 
-        public IndexModel(DepartmentService departmentService)
+        public IndexModel(IMediator mediator)
         {
-            _departmentService = departmentService;
+            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
         public async Task OnGetAsync()
         {
-            Departments = await _departmentService.GetAllAsync();
+            Departments = await _mediator.Send(new GetAllDepartmentsQuery());
         }
     }
 }

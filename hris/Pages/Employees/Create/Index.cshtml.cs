@@ -1,14 +1,15 @@
 using AutoMapper;
-using hris.Division.Application.Query;
-using hris.Division.Application.Service;
-using hris.Division.Domain.Entities;
+
 using hris.Pages.PageModels;
 using hris.Seed.Application.Query;
-using hris.Seed.Application.Service;
+using hris.Seed.Application.Query._Country;
+using hris.Seed.Application.Query._Department;
+using hris.Seed.Application.Query._EmailType;
+using hris.Seed.Application.Query._PhoneNumberType;
+using hris.Seed.Application.Query._Position;
 using hris.Seed.Domain.Entities;
-using hris.Staff.Application.Command;
-using hris.Staff.Application.Dto;
-using hris.Staff.Application.Service;
+using hris.Staff.Application.Command._Employee;
+using hris.Staff.Application.Dto._Employee;
 using hris.Staff.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Components.Forms;
@@ -34,22 +35,17 @@ namespace hris.Pages.Employees.Create
         public List<Position> Positions { get; set; } 
         
 
-        private readonly PositionService _positionService;
-
         private readonly IMapper _mapper;
         private readonly IMediator _mediator;
 
         public IndexModel(
    
-            PositionService positionService,       
 
             IMapper mapper,
             IMediator mediator
             )
         {
  
-            _positionService = positionService;
-
             _mapper = mapper;
             _mediator = mediator;
 
@@ -73,7 +69,7 @@ namespace hris.Pages.Employees.Create
 
             if (CreateEmployee.DepartmentId > 0)
             {
-                Positions = await _positionService.GetAllByDepartmentIdAsync(CreateEmployee.DepartmentId);
+                Positions = await _mediator.Send(new GetPositionsByDepartmentIdQuery(CreateEmployee.DepartmentId));
             }
             else
             {

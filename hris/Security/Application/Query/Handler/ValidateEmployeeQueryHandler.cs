@@ -1,8 +1,9 @@
-﻿using hris.Staff.Application.Dto;
-using hris.Security.Application.Query;
+﻿using hris.Security.Application.Query;
 using MediatR;
 using System.Security.Claims;
 using hris.Staff.Application.Query;
+using hris.Staff.Application.Query._Employee;
+using hris.Staff.Application.Dto._Employee;
 
 namespace hris.Security.Application.Query.Handler
 {

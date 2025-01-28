@@ -4,8 +4,9 @@ using hris.Staff.Domain.Entities;
 using System.Threading.Tasks;
 using MediatR;
 using hris.Staff.Application.Query;
-using hris.Staff.Domain.Exceptions;
 using hris.Pages.PageModels;
+using hris.Staff.Application.Query._Employee;
+using hris.Staff.Domain.Exceptions._Employee;
 
 namespace hris.Pages.Employees.Details
 {

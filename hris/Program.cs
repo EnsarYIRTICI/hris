@@ -1,15 +1,13 @@
 using hris.Database;
 using hris.Security.Application.Command;
 using hris.Security.Middleware;
-using hris.Seed.Application.Service;
-using hris.Staff.Application.Service;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using MediatR;
 using AutoMapper;
-using hris.Division.Application.Service;
 using hris.Security.Application.Service;
+using hris.Seed.Application.Service;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,11 +19,6 @@ builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Warning);
 
-
-builder.Services.AddScoped<EmployeePasswordService>();
-
-builder.Services.AddScoped<DepartmentService>();
-builder.Services.AddScoped<PositionService>();
 
 builder.Services.AddScoped<EmployeeTokenService>();
 builder.Services.AddScoped<SeedService>();

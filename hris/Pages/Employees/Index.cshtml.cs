@@ -4,6 +4,7 @@ using hris.Pages.PageModels;
 using hris.Staff.Domain.Entities;
 using MediatR;
 using hris.Staff.Application.Query;
+using hris.Staff.Application.Query._Employee;
 
 namespace hris.Pages.Employees
 {

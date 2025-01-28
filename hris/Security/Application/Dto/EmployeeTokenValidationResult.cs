@@ -1,4 +1,4 @@
-﻿using hris.Staff.Application.Dto;
+﻿using hris.Staff.Application.Dto._Employee;
 using System.Security.Claims;
 
 namespace hris.Security.Application.Dto

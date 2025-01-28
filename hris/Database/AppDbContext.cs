@@ -1,7 +1,6 @@
 ﻿using hris.Staff.Domain.Entities;
 using hris.Seed.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using hris.Division.Domain.Entities;
 
 namespace hris.Database
 {
