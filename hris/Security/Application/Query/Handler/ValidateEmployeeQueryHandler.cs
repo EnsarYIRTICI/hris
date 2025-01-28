@@ -1,33 +1,39 @@
 ﻿using hris.Staff.Application.Dto;
-using hris.Staff.Application.Service;
+using hris.Security.Application.Query;
 using MediatR;
+using System.Security.Claims;
+using hris.Staff.Application.Query;
 
 namespace hris.Security.Application.Query.Handler
 {
     public class ValidateEmployeeQueryHandler : IRequestHandler<ValidateEmployeeQuery, (bool IsValid, string? ErrorMessage, EmployeeSummary? Employee)>
     {
-        private readonly EmployeeService _employeeService;
+        private readonly IMediator _mediator;
 
-        public ValidateEmployeeQueryHandler(EmployeeService employeeService)
+        public ValidateEmployeeQueryHandler(IMediator mediator)
         {
-            _employeeService = employeeService;
+            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
         public async Task<(bool IsValid, string? ErrorMessage, EmployeeSummary? Employee)> Handle(ValidateEmployeeQuery request, CancellationToken cancellationToken)
         {
             var principal = request.Principal;
+
+            // EmployeeId claim'ini kontrol et
             var employeeIdClaim = principal.FindFirst("EmployeeId")?.Value;
             if (string.IsNullOrEmpty(employeeIdClaim) || !int.TryParse(employeeIdClaim, out int employeeId))
             {
                 return (false, "Token does not contain a valid EmployeeId.", null);
             }
 
-            var employee = await _employeeService.GetSummaryByIdAsync(employeeId);
+            // Çalışan özetini MediatR üzerinden getir
+            var employee = await _mediator.Send(new GetEmployeeSummaryByIdQuery(employeeId), cancellationToken);
             if (employee == null)
             {
                 return (false, "Employee not found in the database.", null);
             }
 
+            // LastPasswordChange kontrolü
             if (employee.LastPasswordChange.HasValue)
             {
                 var tokenLastPasswordChangeClaim = principal.FindFirst("LastPasswordChange")?.Value;
@@ -45,6 +51,7 @@ namespace hris.Security.Application.Query.Handler
                 }
             }
 
+            // Başarılı doğrulama
             return (true, null, employee);
         }
     }

@@ -1,9 +1,11 @@
 ﻿
+using Azure.Core;
 using hris.Security.Application.Command;
 using hris.Security.Application.Dto;
 using hris.Security.Application.Query;
 using hris.Staff.Domain.Entities;
 using MediatR;
+using System.Security.Claims;
 
 namespace hris.Security.Application.Service
 {
@@ -24,7 +26,7 @@ namespace hris.Security.Application.Service
 
             if (principal == null)
             {
-                result.ErrorMessage = "Token geçersiz.";
+                result.ErrorMessage = "Token is invalid.";
                 result.IsValid = false;
                 return result;
             }
@@ -40,10 +42,15 @@ namespace hris.Security.Application.Service
 
         public async Task<string> GenerateToken(Employee employee)
         {
-            return await _mediator.Send(new GenerateTokenCommand(
-                employee.Id.ToString(),
-                employee.LastPasswordChange
-            ));
+            var claims = new List<Claim>
+            {
+                new Claim("EmployeeId", employee.Id.ToString()),
+                new Claim("LastPasswordChange", employee.LastPasswordChange?.ToString() ?? string.Empty)
+            };
+
+            return await _mediator.Send(new GenerateTokenCommand(claims));
         }
+
+
     }
 }

@@ -26,17 +26,14 @@ namespace hris.Security.Application.Command.Handler
                 throw new ArgumentNullException(nameof(request));
             }
 
+            // Secret key
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_secretKey);
 
-            // Claim'leri oluştur
-            var claims = new List<Claim>
-        {
-            new Claim("EmployeeId", request.EmployeeId),
-            new Claim("LastPasswordChange", request.LastPasswordChange?.ToString() ?? string.Empty)
-        };
-
-            // Token descriptor oluştur
+            // Claims
+            var claims = request.Claims;
+       
+            // Token descriptor
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),

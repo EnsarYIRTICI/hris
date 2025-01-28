@@ -21,15 +21,13 @@ builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Warning);
 
-builder.Services.AddScoped<EmployeeTokenService>();
 
-builder.Services.AddScoped<EmployeeService>();
-builder.Services.AddScoped<EmployeeEmailService>();
 builder.Services.AddScoped<EmployeePasswordService>();
 
 builder.Services.AddScoped<DepartmentService>();
 builder.Services.AddScoped<PositionService>();
 
+builder.Services.AddScoped<EmployeeTokenService>();
 builder.Services.AddScoped<SeedService>();
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));

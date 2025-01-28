@@ -29,8 +29,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Division\Application\Command\" />
     <Folder Include="Paper\Application\Service\" />
     <Folder Include="Paper\Domain\Entities\" />
+    <Folder Include="Staff\Presentation\Controller\" />
   </ItemGroup>
 
 </Project>

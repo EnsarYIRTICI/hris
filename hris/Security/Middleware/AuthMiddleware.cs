@@ -1,4 +1,6 @@
-﻿using hris.Security.Application.Service;
+﻿using hris.Security.Application.Dto;
+using hris.Security.Application.Service;
+using hris.Staff.Domain.Entities;
 
 namespace hris.Security.Middleware
 {
@@ -8,13 +10,13 @@ namespace hris.Security.Middleware
 
         public AuthMiddleware(RequestDelegate next)
         {
-            _next = next; // Middleware'in bir sonraki adıma geçmesi için kullanılır.
+            _next = next; 
         }
 
         public async Task Invoke(HttpContext context, IServiceProvider serviceProvider)
         {
-            var path = context.Request.Path; // İstek yapılan yolu alır.
-            var token = context.Request.Cookies["AuthToken"]; // AuthToken cookie'sinden token alınır.
+            var path = context.Request.Path; 
+            var token = context.Request.Cookies["AuthToken"]; 
 
             Console.WriteLine("TOKEN --> " + token);
 
@@ -22,48 +24,55 @@ namespace hris.Security.Middleware
             {
                 var employeeTokenService = scope.ServiceProvider.GetRequiredService<EmployeeTokenService>();
 
-                if (string.IsNullOrEmpty(token)) // Token boş ise kontrol yapılır.
+                // if token is empty
+
+                if (string.IsNullOrEmpty(token))
                 {
-                    if (path.StartsWithSegments("/account/login")) // Login sayfasına erişim sağlanıyorsa devam edilir.
+                    if (path.StartsWithSegments("/account/login")) 
                     {
                         await _next(context);
                     }
-                    else // Aksi halde login sayfasına yönlendirilir.
+                    else 
                     {
                         context.Response.Redirect("/account/login");
                     }
                     return;
                 }
 
-                var validationResult = await employeeTokenService.ValidateToken(token); // Token doğrulanır.
+                // validate employee token
 
-                if (validationResult.IsValid) // Token geçerliyse kullanıcı bilgileri eklenir.
+                EmployeeTokenValidationResult validationResult = await employeeTokenService.ValidateToken(token); 
+
+                // if token is valid
+
+                if (validationResult.IsValid) 
                 {
                     context.Items["Employee"] = validationResult.Employee;
                     context.User = validationResult.Principal;
-
-                    if (path.StartsWithSegments("/account/login")) // Login sayfasındaysa ana sayfaya yönlendirilir.
+                        
+                    if (path.StartsWithSegments("/account/login"))
                     {
                         context.Response.Redirect("/");
                     }
-                    else // Aksi halde bir sonraki middleware'e geçilir.
+                    else 
                     {
                         await _next(context);
                     }
                     return;
                 }
 
-                Console.WriteLine("Error Message --> " + validationResult.ErrorMessage);
+                // if token is not valid
 
-                if (path.StartsWithSegments("/account/login")) // Geçersiz token ile login sayfasında devam edilir.
+                if (path.StartsWithSegments("/account/login")) 
                 {
                     await _next(context);
                 }
-                else // Geçersiz token ile login sayfasına yönlendirilir.
+                else 
                 {
                     context.Response.Redirect("/account/login");
                 }
             }
+
         }
 
     }

@@ -3,7 +3,7 @@ using hris.Division.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace hris.Division.Application.Query
+namespace hris.Division.Application.Query.Handler
 {
     public class GetAllDepartmentsQueryHandler : IRequestHandler<GetAllDepartmentsQuery, List<Department>>
     {

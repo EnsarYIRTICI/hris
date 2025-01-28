@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using hris.Staff.Domain.Entities;
-using hris.Staff.Application.Service;
 using Microsoft.AspNetCore.Mvc;
 using hris.Pages.PageModels;
+using hris.Staff.Domain.Entities;
+using MediatR;
+using hris.Staff.Application.Query;
 
 namespace hris.Pages.Employees
 {
@@ -11,14 +12,14 @@ namespace hris.Pages.Employees
         public string Title { get; set; } = "Employees";
         public string Message { get; set; } = "Manage Employees";
 
-        private readonly EmployeeService _employeeService;
+        private readonly IMediator _mediator;
 
-        public IndexModel(EmployeeService employeeService)
+        public IndexModel(IMediator mediator)
         {
-            _employeeService = employeeService;
+            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
-        public List<Employee> Employees { get; set; }
+        public List<Employee> Employees { get; set; } = new List<Employee>();
 
         [BindProperty(SupportsGet = true)]
         public string SearchTerm { get; set; }
@@ -29,11 +30,11 @@ namespace hris.Pages.Employees
 
             if (!string.IsNullOrWhiteSpace(SearchTerm))
             {
-                Employees = await _employeeService.SearchByFullNameOrTcknAsync(SearchTerm);
+                Employees = await _mediator.Send(new SearchEmployeeQuery(SearchTerm));
             }
             else
             {
-                Employees = await _employeeService.GetAllAsync(offset: 0);
+                Employees = await _mediator.Send(new GetAllEmployeesQuery(offset: 0));
             }
         }
     }

@@ -2,7 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using hris.Staff.Domain.Entities;
 using System.Threading.Tasks;
-using hris.Staff.Application.Service;
+using MediatR;
+using hris.Staff.Application.Query;
 using hris.Staff.Domain.Exceptions;
 using hris.Pages.PageModels;
 
@@ -10,40 +11,39 @@ namespace hris.Pages.Employees.Details
 {
     public class IndexModel : BreadcrumbPageModel
     {
-        private readonly EmployeeService _employeeService;
+        private readonly IMediator _mediator;
 
-        public IndexModel(EmployeeService employeeService)
+        public IndexModel(IMediator mediator)
         {
-            _employeeService = employeeService;
+            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
         [BindProperty]
-        public Employee Employee { get; set; } 
+        public Employee Employee { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int id)
         {
             try
             {
-
                 AddBreadcrumb("Employees", "/employees");
                 AddBreadcrumb("Details");
 
-                Employee = await _employeeService.GetByIdWithDetailsAsync(id);
+                Employee = await _mediator.Send(new GetEmployeeWithDetailsByIdQuery(id));
 
                 if (Employee == null)
                 {
-                    return NotFound(); 
+                    return NotFound();
                 }
 
-                return Page(); 
+                return Page();
             }
             catch (EmployeeNotFoundException)
             {
-                return NotFound(); 
+                return NotFound();
             }
             catch (Exception)
             {
-                return StatusCode(500); 
+                return StatusCode(500);
             }
         }
     }
