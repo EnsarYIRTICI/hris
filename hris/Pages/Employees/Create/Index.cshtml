@@ -11,7 +11,7 @@
     @await Html.PartialAsync("_Breadcrumb", Tuple.Create(Model.Breadcrumbs.AsEnumerable()))
 
 
-    <div class="p-6 mx-auto md:mx-8 md:my-8 bg-white rounded-xl shadow-md space-y-4 w-[27rem]">
+    <div class="p-6 w-[27rem] mx-auto md:mx-8 md:my-8 bg-white rounded-xl shadow-md space-y-4 ">
         <h1 class="text-2xl font-bold text-gray-700">Create Employee</h1>
 
         <!-- Error Message -->
@@ -99,11 +99,12 @@
 
                 @for (int i = 0; i < Model.CreateEmployee.Emails.Count; i++)
                 {
-                    @await Html.PartialAsync("_EmailField", Tuple.Create(
+                    @await Html.PartialAsync("../Shared/_EmailField", Tuple.Create(
                              i,
                              Model.EmailTypes.AsEnumerable(),
                              Model.CreateEmployee.Emails[i].Email,
-                             Model.CreateEmployee.Emails[i].EmailTypeId
+                             Model.CreateEmployee.Emails[i].EmailTypeId,
+                             Model.CreateEmployee.Emails.Count
                              ))
                 }
 
@@ -128,13 +129,14 @@
 
                 @for (int i = 0; i < Model.CreateEmployee.PhoneNumbers.Count; i++)
                 {
-                    @await Html.PartialAsync("_PhoneField", Tuple.Create(
+                    @await Html.PartialAsync("../Shared/_PhoneField", Tuple.Create(
                              i,
                              Model.PhoneNumberTypes.AsEnumerable(),
                              Model.CreateEmployee.PhoneNumbers[i].PhoneNumber,
                              Model.CreateEmployee.PhoneNumbers[i].PhoneTypeId,
                              Model.Countries.AsEnumerable(),
-                             Model.CreateEmployee.PhoneNumbers[i].CountryId
+                             Model.CreateEmployee.PhoneNumbers[i].CountryId,
+                             Model.CreateEmployee.PhoneNumbers.Count
                              ))
                 }
 

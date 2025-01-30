@@ -1,0 +1,115 @@
+﻿@page
+@model hris.Pages.Departments.Create.IndexModel
+@{
+}
+
+<section class="overflow-auto flex-1 h-full p-5">
+
+    <!-- Breadcrumb -->
+    @await Html.PartialAsync("_Breadcrumb", Tuple.Create(Model.Breadcrumbs.AsEnumerable()))
+
+
+    <div class="p-6 w-full md:w-[27rem] inline-flex flex-col mx-auto md:mx-8 md:my-8 bg-white rounded-xl shadow-md space-y-4 ">
+
+        <!-- Error Message -->
+        @await Html.PartialAsync("_ErrorMessage", Tuple.Create(ModelState.IsValid, Model.ErrorMessage))
+
+
+        <!-- Success Message -->
+        @await Html.PartialAsync("_SuccessMessage", Tuple.Create(Model.SuccessMessage))
+
+        <h1 class="text-2xl font-bold text-gray-700">Create Department</h1>
+
+        <form id="main-form" method="post" class=" space-y-4">
+
+            <div class="mb-3"></div>
+
+            <!-- Department Information -->
+
+            <div>
+                <label for="Name" class="block text-sm font-medium text-gray-700">Name</label>
+                <input type="text"
+                       id="Name"
+                       name="Name"
+                       value="@Model.CreateDepartment.Name"
+                       placeholder="Human Resource"
+                       required
+                       maxlength="100"
+                       class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
+            </div>
+
+
+
+            <section class="space-y-4">
+
+                <!-- Positions -->
+
+                @{
+                    for (var i = 0; i < Model.CreateDepartment.Positions.Count; i++)
+                    {
+                        @await Html.PartialAsync("../Shared/_PositionField.cshtml", 
+                        Tuple.Create(i, @Model.CreateDepartment.Positions[i].Name, Model.CreateDepartment.Positions.Count))
+
+                    }
+                }
+
+                <!-- Add Position -->
+
+                <div onclick="AddPosition()" class="py-2 inline-flex items-center text-blue-500 hover:text-blue-300 cursor-pointer transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                         class="lucide lucide-circle-plus">
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M8 12h8" />
+                        <path d="M12 8v8" />
+                    </svg>
+
+                    <span class="ml-1 text-xs">Add Another Position</span>
+                </div>
+
+            </section>
+
+
+            <!-- Submit -->
+
+            <button type="submit" asp-page-handler="Create"
+                    class="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                Submit
+            </button>
+
+
+            <!-- Hidden States -->
+
+            <input id="AddPosition" type="hidden" name="AddPosition" asp-for=CreateDepartment.AddPosition value=@Model.CreateDepartment.AddPosition>
+
+            <input id="DeletePositionId" type="hidden" name="DeletePositionId" asp-for=CreateDepartment.DeletePositionId value=@Model.CreateDepartment.DeletePositionId>
+        </form>
+    </div>
+
+</section>
+
+
+<script>
+    // Refresh
+
+    function Refresh() {
+        document.getElementById("main-form").action = "/departments/create";
+        document.getElementById("main-form").submit();
+    }
+
+    // Add Position
+
+
+    function AddPosition() {
+        document.getElementById('AddPosition').value = "true";
+        Refresh();
+    }
+
+    // Delete Position
+
+    function DeletePosition(index) {
+        document.getElementById('DeletePositionId').value = index;
+        Refresh();
+    }
+
+</script>

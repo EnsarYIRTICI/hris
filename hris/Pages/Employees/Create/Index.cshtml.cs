@@ -1,6 +1,7 @@
 using AutoMapper;
 
 using hris.Pages.PageModels;
+using hris.Seed.Application.Dto._Department;
 using hris.Seed.Application.Query;
 using hris.Seed.Application.Query._Country;
 using hris.Seed.Application.Query._Department;
@@ -31,7 +32,7 @@ namespace hris.Pages.Employees.Create
         public List<Country> Countries { get; set; }
         public List<EmailType> EmailTypes { get; set; }
         public List<PhoneNumberType> PhoneNumberTypes { get; set; }
-        public List<Department> Departments { get; set; }
+        public List<DepartmentSummaryDto> Departments { get; set; }
         public List<Position> Positions { get; set; } 
         
 
@@ -99,24 +100,6 @@ namespace hris.Pages.Employees.Create
             {
                 ModelState.Clear();
 
-                Console.WriteLine(CreateEmployee.AddPhone);
-                Console.WriteLine(CreateEmployee.AddEmail);
-                Console.WriteLine(CreateEmployee.DepartmentId);
-                Console.WriteLine(CreateEmployee.DeleteEmailId);
-                Console.WriteLine(CreateEmployee.DeletePhoneId);
-
-                if (CreateEmployee.AddEmail)
-                {
-                    CreateEmployee.Emails.Add(new EmailDto());
-                    CreateEmployee.AddEmail = false;
-                }
-
-                if (CreateEmployee.AddPhone)
-                {
-                    CreateEmployee.PhoneNumbers.Add(new PhoneDto());
-                    CreateEmployee.AddPhone = false;
-                }
-
                 if (CreateEmployee.DeleteEmailId >= 0 && CreateEmployee.DeleteEmailId < CreateEmployee.Emails.Count && CreateEmployee.Emails.Count > 1)
                 {
                     CreateEmployee.Emails.RemoveAt(CreateEmployee.DeleteEmailId);
@@ -130,6 +113,18 @@ namespace hris.Pages.Employees.Create
                     
                 }
                 CreateEmployee.DeletePhoneId = -1;
+
+                if (CreateEmployee.AddEmail)
+                {
+                    CreateEmployee.Emails.Add(new EmailDto());
+                    CreateEmployee.AddEmail = false;
+                }
+
+                if (CreateEmployee.AddPhone)
+                {
+                    CreateEmployee.PhoneNumbers.Add(new PhoneDto());
+                    CreateEmployee.AddPhone = false;
+                }
 
                 await Init(false);
                 return Page();
@@ -159,7 +154,7 @@ namespace hris.Pages.Employees.Create
                     var createEmployeeCommand = _mapper.Map<CreateEmployeeCommand>(CreateEmployee);
                     var employee = await _mediator.Send(createEmployeeCommand);
 
-                    Console.Write(employee.FirstName + " " + employee.LastName);
+                    Console.WriteLine(employee.FirstName + " " + employee.LastName);
 
                     SuccessMessage = "Employee created successfully!";
 

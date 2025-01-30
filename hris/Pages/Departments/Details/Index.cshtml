@@ -1,0 +1,11 @@
+﻿@page "{id:int}"
+
+@model hris.Pages.Departments.Details.IndexModel
+@{
+}
+
+<div flex="1">
+
+    @await Html.PartialAsync("_Breadcrumb", Tuple.Create(Model.Breadcrumbs.AsEnumerable()))
+
+</div>

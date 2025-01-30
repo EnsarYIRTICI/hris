@@ -1,4 +1,4 @@
-﻿@model Tuple<int, IEnumerable<hris.Seed.Domain.Entities.PhoneNumberType>, string, int, IEnumerable<hris.Seed.Domain.Entities.Country>, int>
+﻿@model Tuple<int, IEnumerable<hris.Seed.Domain.Entities.PhoneNumberType>, string, int, IEnumerable<hris.Seed.Domain.Entities.Country>, int, int>
 
 @{
     int index = Model.Item1;
@@ -9,7 +9,7 @@
 
     <!-- Country Code -->
 
-    <div class="w-[25%]">
+    <div class="w-[20%]">
         <label class="block text-sm font-medium text-gray-700">Type</label>
         <select name="PhoneNumbers[@Model.Item1].CountryId"
                 asp-for="@Model.Item6"
@@ -25,7 +25,7 @@
 
     <!-- Phone Number -->
 
-    <div class="w-[35%]">
+    <div class="flex-1">
         <label class="block text-sm font-medium text-gray-700">Phone Number</label>
         <input type="text"
                id="phoneField_@index"
@@ -41,7 +41,7 @@
 
     <!-- Phone Number Type -->
 
-    <div class="w-[30%]">
+    <div class="w-[25%]">
         <label class="block text-sm font-medium text-gray-700">Type</label>
 
         <select name="PhoneNumbers[@Model.Item1].PhoneTypeId"
@@ -59,11 +59,19 @@
 
     <!-- Delete -->
 
-    <div onclick="DeletePhone(@Model.Item1)" class="w-[10%] text-xs mt-5 flex items-center justify-center ml-4 cursor-pointer text-red-500 hover:text-red-700">
 
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-2"><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" /><line x1="10" x2="10" y1="11" y2="17" /><line x1="14" x2="14" y1="11" y2="17" /></svg>
+    @{
+        if (Model.Item1 == 0 && Model.Item7 < 2)
+        {
 
-    </div>
+        }
+        else
+        {
+            <div onclick="DeletePhone(@Model.Item1)" class="w-[10%] text-xs mt-5 flex items-center justify-center ml-4 cursor-pointer text-red-500 hover:text-red-700">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-2"><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" /><line x1="10" x2="10" y1="11" y2="17" /><line x1="14" x2="14" y1="11" y2="17" /></svg>
+            </div>
+        }
+    }
 
 </div>
 

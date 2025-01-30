@@ -9,8 +9,7 @@ namespace hris.Staff.Mapping
         public EmployeeMappingProfile()
         {
             CreateMap<CreateEmployeeDto, CreateEmployeeCommand>();
-            CreateMap<PhoneDto, PhoneCommand>();
-            CreateMap<EmailDto, EmailCommand>();
+     
         }
     }
 }
