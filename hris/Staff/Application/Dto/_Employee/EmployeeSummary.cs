@@ -1,10 +1,14 @@
-﻿namespace hris.Staff.Application.Dto._Employee
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace hris.Staff.Application.Dto._Employee
 {
     public class EmployeeSummary
     {
-        public string FirstName { get; set; } // Çalışanın adı
-        public string LastName { get; set; } // Çalışanın soyadı
-        public string Email { get; set; } // Çalışanın tek e-posta adresi
-        public DateTime? LastPasswordChange { get; set; } // Son şifre değişim tarihi
+        public int Id { get; set; }
+        public string FirstName { get; set; } 
+        public string LastName { get; set; }
+        public string Tckn { get; set; }
+        public string Email { get; set; }
+        public DateTime DateOfBirth { get; set; } 
     }
 }

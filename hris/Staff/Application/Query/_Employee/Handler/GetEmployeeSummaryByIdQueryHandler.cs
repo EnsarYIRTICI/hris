@@ -38,7 +38,6 @@ namespace hris.Staff.Application.Query._Employee.Handler
             {
                 FirstName = employee.FirstName,
                 LastName = employee.LastName,
-                LastPasswordChange = employee.LastPasswordChange,
                 Email = validatedEmail.Email
             };
         }

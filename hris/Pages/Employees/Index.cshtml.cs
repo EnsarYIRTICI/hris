@@ -5,6 +5,7 @@ using hris.Staff.Domain.Entities;
 using MediatR;
 using hris.Staff.Application.Query;
 using hris.Staff.Application.Query._Employee;
+using hris.Staff.Application.Dto._Employee;
 
 namespace hris.Pages.Employees
 {
@@ -20,7 +21,7 @@ namespace hris.Pages.Employees
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
-        public List<Employee> Employees { get; set; } = new List<Employee>();
+        public List<EmployeeSummary> Employees { get; set; } = new List<EmployeeSummary>();
 
         [BindProperty(SupportsGet = true)]
         public string SearchTerm { get; set; }

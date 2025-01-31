@@ -23,7 +23,8 @@ namespace hris.Seed.Application.Query._Department.Handler
                 {
                     Id = d.Id,
                     Name = d.Name,
-                    PositionsCount = d.Positions.Count() 
+                    PositionsCount = d.Positions.Count(),
+                    EmployeesCount = d.Positions.SelectMany(p => p.EmployeePositions).Count()
                 })
                 .ToListAsync(cancellationToken);
         }

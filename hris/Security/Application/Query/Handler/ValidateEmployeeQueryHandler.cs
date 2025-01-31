@@ -4,6 +4,7 @@ using System.Security.Claims;
 using hris.Staff.Application.Query;
 using hris.Staff.Application.Query._Employee;
 using hris.Staff.Application.Dto._Employee;
+using hris.Staff.Domain.Entities;
 
 namespace hris.Security.Application.Query.Handler
 {
@@ -28,7 +29,7 @@ namespace hris.Security.Application.Query.Handler
             }
 
             // Çalışan özetini MediatR üzerinden getir
-            var employee = await _mediator.Send(new GetEmployeeSummaryByIdQuery(employeeId), cancellationToken);
+            Employee? employee = await _mediator.Send(new GetEmployeeByIdQuery(employeeId), cancellationToken);
             if (employee == null)
             {
                 return (false, "Employee not found in the database.", null);
@@ -52,8 +53,16 @@ namespace hris.Security.Application.Query.Handler
                 }
             }
 
+            EmployeeSummary? employeeSummary = await _mediator.Send(new GetEmployeeSummaryByIdQuery(employeeId), cancellationToken);
+
+            if(employeeSummary == null) 
+            {
+                return (false, "Employee not found in the database.", null);
+            }
+
             // Başarılı doğrulama
-            return (true, null, employee);
+
+            return (true, null, employeeSummary);
         }
     }
 }

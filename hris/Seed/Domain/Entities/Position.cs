@@ -20,6 +20,6 @@ namespace hris.Seed.Domain.Entities
         [ForeignKey("DepartmentId")]
         public Department Department { get; set; } // Departman ile ilişki
 
-        public ICollection<EmployeePosition> Positions { get; set; } = new List<EmployeePosition>(); // Çalışan Pozisyonları
+        public ICollection<EmployeePosition> EmployeePositions { get; set; } = new List<EmployeePosition>(); // Çalışan Pozisyonları
     }
 }
